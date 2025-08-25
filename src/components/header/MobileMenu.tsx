@@ -57,7 +57,7 @@ export default function MobileMenu({ isOpen, items, onClose }: MobileMenuProps) 
 
           <div className="flex justify-center space-x-4 mb-5">
             <a 
-              href="https://wa.me/5548919700099" 
+              href="https://wa.me/554891970099" 
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 flex items-center justify-center rounded-full contact-icon whatsapp-icon touch-manipulation"
