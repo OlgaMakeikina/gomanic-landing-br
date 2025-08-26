@@ -13,7 +13,8 @@ export default function ContactSection() {
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
-        color: '#FEFEFE'
+        color: '#FEFEFE',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 -20px 60px rgba(0, 0, 0, 0.4)'
       }}
       aria-labelledby="contact-heading"
     >

@@ -147,7 +147,8 @@ export default function VipExclusivo() {
     <section id="vip-exclusivo" className="vogue-section relative overflow-hidden" 
              style={{
                background: 'linear-gradient(135deg, #3B3B3A 0%, #2a2a29 50%, #1f1f1e 100%)',
-               color: '#FEFEFE'
+               color: '#FEFEFE',
+               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 -20px 60px rgba(0, 0, 0, 0.4)'
              }}
              aria-labelledby="vip-heading">
       
@@ -167,7 +168,7 @@ export default function VipExclusivo() {
         <div className="text-center mb-20">
           <div className="vogue-caption mb-4" 
                style={{
-                 color: '#444e55',
+                 color: '#FEFEFE',
                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
                }}>
             ACESSO LIMITADO

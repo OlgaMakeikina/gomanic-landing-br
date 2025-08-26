@@ -35,7 +35,10 @@ export default function SegurancaQualidade(): JSX.Element {
     <section 
       id="seguranca" 
       className="relative py-20" 
-      style={{ backgroundColor: COLORS.dark }}
+      style={{ 
+        backgroundColor: COLORS.dark,
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 -20px 60px rgba(0, 0, 0, 0.4)'
+      }}
       aria-labelledby="seguranca-heading"
     >
       {/* Текстурный фон */}

@@ -14,7 +14,8 @@ export default function ClientsSection() {
       id="clientes" 
       className="py-20" 
       style={{ 
-        background: 'linear-gradient(135deg, #3B3B3A 0%, #2a2a29 50%, #1f1f1e 100%)'
+        background: 'linear-gradient(135deg, #3B3B3A 0%, #2a2a29 50%, #1f1f1e 100%)',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 -20px 60px rgba(0, 0, 0, 0.4)'
       }}
       aria-labelledby="clientes-heading"
     >
