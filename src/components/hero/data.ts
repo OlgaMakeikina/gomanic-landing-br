@@ -19,5 +19,17 @@ export const heroSlides: HeroSlide[] = [
       { name: 'Alongamento + manicure + esmaltação em gel', oldPrice: 200, newPrice: 119 },
       { name: 'Combo: manicure + esmaltação em gel + pedicure + plástica dos pés', oldPrice: 320, newPrice: 160 }
     ]
+  },
+
+  {
+    id: 3,
+    image: '/images/hero/0_3 (8) (1).jpeg',
+    title: 'Benefícios VIP',
+    subtitle: 'Vantagens exclusivas para membros',
+    benefits: [
+      'Somente 30 clientes por mês podem ter Passe VIP',
+      'O preço nunca mais se repete depois que as vagas esgotarem',
+      'VIPs recebem um brinde surpresa na primeira visita'
+    ]
   }
 ]
