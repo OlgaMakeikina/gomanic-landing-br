@@ -285,7 +285,7 @@ export default function PromocoesMes2() {
                       >
                         O QUE ESTÁ INCLUÍDO:
                       </div>
-                      <ul className="space-y-1">
+                      <ul className="space-y-1 mb-4">
                         {promo.inclui.map((item, i) => (
                           <li 
                             key={i} 
@@ -302,6 +302,39 @@ export default function PromocoesMes2() {
                           </li>
                         ))}
                       </ul>
+                      
+                      {/* Кнопка записи внутри аккордеона */}
+                      <button
+                        onClick={() =>
+                          document.getElementById("agendamento")?.scrollIntoView({ behavior: "smooth", block: "start" })
+                        }
+                        className="w-full px-4 py-2 rounded-lg transition-all duration-300"
+                        style={{
+                          background: '#FEFEFE',
+                          color: '#444e55',
+                          border: '1px solid #FEFEFE',
+                          fontFamily: "Garet, sans-serif",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          boxShadow: "0 4px 12px rgba(254,254,254,0.15)",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "transparent"
+                          e.currentTarget.style.color = '#FEFEFE'
+                          e.currentTarget.style.boxShadow = "0 4px 12px rgba(254,254,254,0.10)"
+                          e.currentTarget.style.border = '1px solid #FEFEFE'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#FEFEFE'
+                          e.currentTarget.style.color = '#444e55'
+                          e.currentTarget.style.boxShadow = "0 4px 12px rgba(254,254,254,0.15)"
+                          e.currentTarget.style.border = '1px solid #FEFEFE'
+                        }}
+                      >
+                        QUERO GARANTIR MINHA VAGA AGORA
+                      </button>
                     </div>
                   </div>
                 )}
