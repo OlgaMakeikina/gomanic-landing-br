@@ -146,7 +146,7 @@ export default function VipExclusivo() {
   return (
     <section id="vip-exclusivo" className="vogue-section relative overflow-hidden" 
              style={{
-               background: 'linear-gradient(135deg, #3B3B3A 0%, #2a2a29 50%, #1f1f1e 100%)',
+               background: 'linear-gradient(135deg, #444f55 0%, #3a434a 50%, #444f55 100%)',
                color: '#FEFEFE',
                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 -20px 60px rgba(0, 0, 0, 0.4)'
              }}
