@@ -8,7 +8,7 @@ import MobileTimeline from './MobileTimeline'
 export default function ComoFunciona() {
   return (
     <section id="como-funciona" className="py-20" style={{
-      backgroundColor: '#444e55',
+      backgroundColor: '#2a2f35',
       boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 -20px 60px rgba(0, 0, 0, 0.4)'
     }} aria-labelledby="como-funciona-heading">
       <div className="vogue-container">

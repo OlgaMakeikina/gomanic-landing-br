@@ -16,7 +16,18 @@ export default function DesktopStepCard({ passo, index }: ProcessStepCardProps) 
       
       <div className={`flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
         <div className={`w-5/12 ${index % 2 === 0 ? 'pr-12' : 'pl-12'}`}>
-          <div className="backdrop-blur-xl rounded-2xl p-8 border border-white border-opacity-20">
+          <div className="backdrop-blur-xl rounded-2xl p-8 border relative"
+               style={{
+                 background: 'rgba(255, 255, 255, 0.12)',
+                 borderColor: 'rgba(255, 255, 255, 0.25)',
+                 boxShadow: '0 32px 64px rgba(0,0,0,0.5)'
+               }}>
+            
+            {/* Glassmorphism градиенты */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-tl from-black/20 via-transparent to-black/10 rounded-2xl"></div>
+            
+            <div className="relative z-10">
             <div className="mb-6 rounded-xl overflow-hidden"
                  style={{boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)'}}>
               <img src={passo.imagem} alt={passo.titulo} className="w-full h-48 object-cover" />
@@ -25,10 +36,34 @@ export default function DesktopStepCard({ passo, index }: ProcessStepCardProps) 
             <p className="vogue-body text-lg mb-4" style={{color: '#FEFEFE', fontWeight: 600}}>{passo.descricao}</p>
             <p className="vogue-body text-base mb-4" style={{color: '#FEFEFE', opacity: 0.9}}>{passo.detalhes}</p>
             {passo.seguranca && (
-              <div className="mt-6 p-4 rounded-lg backdrop-blur-sm border border-white border-opacity-20" style={{background: 'rgba(254, 254, 254, 0.12)'}}>
-                <p className="text-sm text-center" style={{color: '#FEFEFE'}}>{passo.seguranca}</p>
+              <div className="mt-6">
+                {index === 0 ? (
+                  <button
+                    onClick={() => document.getElementById("agendamento")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="group w-full p-4 rounded-lg backdrop-blur-sm border border-white border-opacity-20 transition-all duration-300 cursor-pointer hover:bg-opacity-80"
+                    style={{background: 'rgba(254, 254, 254, 0.12)'}}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(254, 254, 254, 0.20)'
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(254, 254, 254, 0.12)'
+                      e.currentTarget.style.transform = 'translateY(0px)'
+                    }}
+                  >
+                    <p className="text-sm text-center font-semibold flex items-center justify-center gap-2" style={{color: '#FEFEFE'}}>
+                      {passo.seguranca}
+                      <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                    </p>
+                  </button>
+                ) : (
+                  <div className="p-4 rounded-lg backdrop-blur-sm border border-white border-opacity-20" style={{background: 'rgba(254, 254, 254, 0.12)'}}>
+                    <p className="text-sm text-center" style={{color: '#FEFEFE'}}>{passo.seguranca}</p>
+                  </div>
+                )}
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
