@@ -2,7 +2,7 @@ import { SocialLink } from './types'
 
 export const socialLinks: SocialLink[] = [
   {
-    href: "tel:+5548919700099",
+    href: "tel:+5548991970099",
     icon: "/images/contacts/icons8-call-100.png",
     alt: "Phone"
   },

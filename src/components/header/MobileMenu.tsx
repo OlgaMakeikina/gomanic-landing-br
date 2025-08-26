@@ -78,7 +78,7 @@ export default function MobileMenu({ isOpen, items, onClose }: MobileMenuProps) 
             </a>
 
             <a 
-              href="tel:+5548919700099" 
+              href="tel:+5548991970099" 
               className="w-12 h-12 flex items-center justify-center rounded-full contact-icon phone-icon touch-manipulation"
               style={{
                 backgroundColor: '#444e55',
