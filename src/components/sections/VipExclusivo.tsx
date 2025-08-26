@@ -269,9 +269,11 @@ export default function VipExclusivo() {
               QUERO MEU PASSE VIP AGORA!
             </button>
             
-            <p className="text-sm mt-4" style={{color: '#FEFEFE', opacity: 0.9}}>
-              Pagamento da entrada é 100% seguro. Se não puder comparecer, reagendamos ou devolvemos o valor.
-            </p>
+   {/* 
+<p className="text-sm mt-4" style={{color: '#FEFEFE', opacity: 0.9}}>
+  Pagamento da entrada é 100% seguro. Se não puder comparecer, reagendamos ou devolvemos o valor.
+</p> 
+*/}
             </div>
           </div>
         </div>
