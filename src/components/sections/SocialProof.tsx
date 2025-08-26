@@ -17,7 +17,7 @@ export default function SocialProof() {
             className="uppercase tracking-[0.22em] mb-3"
             style={{ color: COLORS.gray, fontFamily: "Garet, sans-serif", fontSize: 14, opacity: 0.85 }}
           >
-            REDES SOCIAIS
+            AVALIAÇÕES
           </div>
 
           <h2
