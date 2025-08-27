@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Sistema Gomanic</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .whatsapp { background: #25d366; }
+        .whatsapp:hover { background: #20b558; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste Sistema Gomanic Brasil</h1>
+    
+    <div class="test-section success">
+        <h2>✅ Email Teste</h2>
+        <p><strong>Status:</strong> Enviado com sucesso para zarudesu@gmail.com</p>
+        <p><strong>Servidor:</strong> mx.hhivp.com:465</p>
+        <p><strong>Credenciais:</strong> vip@gomanic.com.br</p>
+    </div>
+
+    <div class="test-section">
+        <h2>📱 WhatsApp Tests</h2>
+        <p><strong>Número:</strong> +55 48 99917-0099</p>
+        
+        <button class="whatsapp" onclick="testWhatsApp()">
+            🧪 Teste WhatsApp Completo
+        </button>
+        
+        <button class="whatsapp" onclick="testWhatsAppSimple()">
+            💬 Teste WhatsApp Simples
+        </button>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 Links Curtos</h2>
+        
+        <button onclick="testRedirect('vip80')">
+            /vip80 (R$ 80)
+        </button>
+        
+        <button onclick="testRedirect('vip119')">
+            /vip119 (R$ 119)
+        </button>
+        
+        <button onclick="testRedirect('vip160')">
+            /vip160 (R$ 160)
+        </button>
+    </div>
+
+    <script>
+        function testWhatsApp() {
+            const message = `Olá! Sou *João Silva* e gostaria de agendar o serviço:
+
+✨ *MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL*
+💰 *R$ 80*
+
+Aqui está meu link personalizado para agendamento:
+🔗 http://localhost:3010/vip80
+
+Obrigado! 💅`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=5548991700099&text=${encodedMessage}`;
+            
+            console.log('WhatsApp URL:', whatsappUrl);
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function testWhatsAppSimple() {
+            const message = 'Olá! Gostaria de saber mais informações sobre os serviços da Gomanic Brasil.';
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=5548991700099&text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function testRedirect(service) {
+            const url = `http://localhost:3010/${service}`;
+            console.log('Testing redirect:', url);
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>

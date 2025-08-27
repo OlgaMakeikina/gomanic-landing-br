@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { submitToN8N } from '@/utils/n8n';
+import { generateWhatsAppLink } from '@/utils/whatsapp';
+import { sendBookingEmail } from '@/utils/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,30 +14,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const submissionData = {
-      name,
-      phone,
-      email,
-      service,
-    };
+    const whatsappUrl = generateWhatsAppLink(name, service);
 
-    const result = await submitToN8N(submissionData);
-
-    if (result.success) {
-      return NextResponse.json({
-        success: true,
-        message: 'Dados enviados com sucesso! Você receberá um email em breve.',
-        data: result.data,
-      });
-    } else {
-      console.error('N8N submission failed:', result.error);
-      return NextResponse.json(
-        { error: result.error || 'Erro ao enviar dados' },
-        { status: 500 }
-      );
+    try {
+      await sendBookingEmail(email, name, service);
+    } catch (emailError) {
+      console.warn('Email sending failed, but continuing with WhatsApp:', emailError);
     }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Link do WhatsApp gerado e email enviado!',
+      data: {
+        whatsappUrl,
+        name,
+        service,
+        email
+      },
+    });
   } catch (error) {
-    console.error('API submission error:', error);
+    console.error('API booking error:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

@@ -1,7 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { trackFormSubmission } from '@/utils/analytics';
+import { 
+  validateBrazilianPhone, 
+  validateBrazilianName, 
+  validateEmail,
+  formatBrazilianPhone
+} from '@/utils/validation';
+import { openWhatsAppChat } from '@/utils/whatsapp';
 
 interface BookingFormProps {
   className?: string;
@@ -16,6 +23,11 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
     service: '',
     consentLGPD: false,
   });
+  const [errors, setErrors] = useState({
+    name: '',
+    phone: '',
+    email: ''
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -28,6 +40,45 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
   };
 
   // Список услуг
+  const validateField = (field: string, value: string) => {
+    let validation: { isValid: boolean; error?: string };
+    
+    switch (field) {
+      case 'name':
+        validation = validateBrazilianName(value);
+        break;
+      case 'phone':
+        validation = validateBrazilianPhone(value);
+        break;
+      case 'email':
+        validation = validateEmail(value);
+        break;
+      default:
+        return;
+    }
+    
+    setErrors(prev => ({
+      ...prev,
+      [field]: validation.isValid ? '' : validation.error || ''
+    }));
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    let processedValue = value;
+    
+    if (field === 'phone') {
+      processedValue = formatBrazilianPhone(value);
+    }
+    
+    setFormData(prev => ({ ...prev, [field]: processedValue }));
+    
+    if (value.trim()) {
+      validateField(field, value);
+    } else {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
   const services = [
     {
       id: 'manicure-gel',
@@ -51,6 +102,22 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
     setIsSubmitting(true);
     setError('');
 
+    const nameValidation = validateBrazilianName(formData.name);
+    const phoneValidation = validateBrazilianPhone(formData.phone);
+    const emailValidation = validateEmail(formData.email);
+
+    setErrors({
+      name: nameValidation.isValid ? '' : nameValidation.error || '',
+      phone: phoneValidation.isValid ? '' : phoneValidation.error || '',
+      email: emailValidation.isValid ? '' : emailValidation.error || ''
+    });
+
+    if (!nameValidation.isValid || !phoneValidation.isValid || !emailValidation.isValid) {
+      setError('Por favor, corrija os erros nos campos acima');
+      setIsSubmitting(false);
+      return;
+    }
+
     // Валидация выбора услуги
     if (!formData.service) {
       setError('Por favor, escolha uma opção de serviço');
@@ -73,8 +140,15 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
         body: JSON.stringify({ ...formData, type: 'booking' }),
       });
 
-      const result = await response.json();      if (result.success) {
+      const result = await response.json();
+      
+      if (result.success) {
         setIsSubmitted(true);
+        
+        // Открываем WhatsApp чат
+        openWhatsAppChat(formData.name, formData.service);
+        
+        // Analytics
         if (typeof window !== 'undefined' && window.gtag) {
           window.gtag('event', 'conversion', {
             send_to: 'AW-XXXXXXXXX/XXXXXXXXXXXXX',
@@ -112,7 +186,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
             textTransform: 'uppercase',
             fontWeight: 600
           }}>
-            ✅ DADOS ENVIADOS COM SUCESSO!
+            ✅ LINK ENVIADO COM SUCESSO!
           </div>
           <p style={{
             color: '#FEFEFE',
@@ -121,7 +195,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
             opacity: 0.9,
             lineHeight: 1.6
           }}>
-            Obrigado! Você receberá um email com os links de agendamento em breve.
+            Seu link de agendamento foi enviado por WhatsApp e email. Complete a conversa no WhatsApp para finalizar.
           </p>
         </div>
       </div>
@@ -159,17 +233,25 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40"
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                onBlur={(e) => validateField('name', e.target.value)}
+                className={`glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
+                  errors.name ? 'border-red-400' : ''
+                }`}
                 placeholder="Seu nome completo"
                 style={{
                   background: 'rgba(255, 255, 255, 0.15)',
-                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  borderColor: errors.name ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.2)',
                   color: '#FEFEFE',
                   fontFamily: 'Garet, sans-serif',
                   fontSize: 16
                 }}
               />
+              {errors.name && (
+                <p className="text-red-400 text-sm mt-1 font-medium">
+                  {errors.name}
+                </p>
+              )}
             </div>
             
             <div>
@@ -187,17 +269,25 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 type="tel"
                 required
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40"
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                onBlur={(e) => validateField('phone', e.target.value)}
+                className={`glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
+                  errors.phone ? 'border-red-400' : ''
+                }`}
                 placeholder="(11) 99999-9999"
                 style={{
                   background: 'rgba(255, 255, 255, 0.15)',
-                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  borderColor: errors.phone ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.2)',
                   color: '#FEFEFE',
                   fontFamily: 'Garet, sans-serif',
                   fontSize: 16
                 }}
               />
+              {errors.phone && (
+                <p className="text-red-400 text-sm mt-1 font-medium">
+                  {errors.phone}
+                </p>
+              )}
             </div>
 
             <div>
@@ -215,17 +305,25 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40"
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                onBlur={(e) => validateField('email', e.target.value)}
+                className={`glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
+                  errors.email ? 'border-red-400' : ''
+                }`}
                 placeholder="seu@email.com"
                 style={{
                   background: 'rgba(255, 255, 255, 0.15)',
-                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  borderColor: errors.email ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.2)',
                   color: '#FEFEFE',
                   fontFamily: 'Garet, sans-serif',
                   fontSize: 16
                 }}
               />
+              {errors.email && (
+                <p className="text-red-400 text-sm mt-1 font-medium">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             <div>
@@ -368,7 +466,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 padding: '16px 48px'
               }}
             >
-              {isSubmitting ? 'ENVIANDO...' : 'ENVIAR DADOS'}
+              {isSubmitting ? 'ENVIANDO...' : 'RECEBER LINK NO WHATSAPP'}
             </button>
           </div>
         </form>
