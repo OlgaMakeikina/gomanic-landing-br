@@ -14,6 +14,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
     phone: '',
     email: '',
     service: '',
+    consentLGPD: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -53,6 +54,12 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
     // Валидация выбора услуги
     if (!formData.service) {
       setError('Por favor, escolha uma opção de serviço');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.consentLGPD) {
+      setError('É necessário aceitar os termos para continuar');
       setIsSubmitting(false);
       return;
     }
@@ -290,6 +297,43 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-start space-x-3 p-4 rounded-xl border backdrop-blur-sm"
+                   style={{
+                     background: 'rgba(255, 255, 255, 0.08)',
+                     borderColor: 'rgba(255, 255, 255, 0.15)',
+                   }}>
+                <input
+                  type="checkbox"
+                  id="consentLGPD"
+                  checked={formData.consentLGPD}
+                  onChange={(e) => setFormData({ ...formData, consentLGPD: e.target.checked })}
+                  className="mt-1 rounded focus:ring-white/40"
+                  style={{ accentColor: '#FEFEFE' }}
+                />
+                <label htmlFor="consentLGPD" className="cursor-pointer" style={{
+                  color: '#FEFEFE',
+                  fontFamily: 'Garet, sans-serif',
+                  fontSize: 13,
+                  lineHeight: 1.5,
+                  opacity: 0.9
+                }}>
+                  Ao marcar esta opção, autorizo o tratamento dos meus dados pessoais para fins de agendamento e comunicação. 
+                  <br />
+                  <a 
+                    href="/politica-privacidade" 
+                    className="underline hover:no-underline transition-all"
+                    style={{ 
+                      color: '#FEFEFE',
+                      opacity: 0.8 
+                    }}
+                  >
+                    Leia nossa Política de Privacidade
+                  </a>
+                </label>
               </div>
             </div>
 

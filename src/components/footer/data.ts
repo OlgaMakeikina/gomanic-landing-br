@@ -33,7 +33,7 @@ export const companyData = [
   },
   {
     label: "PIX",
-    value: "(48) 99673-7351"
+    value: "48996737351"
   }
 ]
 
