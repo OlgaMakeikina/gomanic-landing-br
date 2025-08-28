@@ -8,13 +8,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { type, data } = body;
 
-    console.log('🔔 MercadoPago webhook received:', { type, data });
+    console.log('🔔 MercadoPago webhook ПОЛНЫЕ данные:', JSON.stringify(body, null, 2));
 
     if (type === 'payment') {
       const paymentId = data?.id;
       
       if (!paymentId) {
-        console.warn('Payment webhook without payment ID');
+        console.warn('⚠️  Payment webhook without payment ID');
         return NextResponse.json({ message: 'Payment ID missing' }, { status: 200 });
       }
 
@@ -23,19 +23,32 @@ export async function POST(request: NextRequest) {
       // Получаем дополнительные данные из webhook
       const external_reference = data?.external_reference;
       console.log('🔗 External reference (orderId):', external_reference);
+      console.log('📋 Все данные data:', JSON.stringify(data, null, 2));
       
       // Ищем booking по external_reference (наш orderId)
       let booking = null;
       if (external_reference) {
+        console.log('🔍 Ищем booking по external_reference:', external_reference);
         booking = await bookingStorage.getBookingByExternalReference(external_reference);
+        
+        if (booking) {
+          console.log('✅ Booking НАЙДЕН:', {
+            orderId: booking.orderId,
+            email: booking.email,
+            name: booking.name,
+            service: booking.service
+          });
+        } else {
+          console.error('❌ Booking НЕ НАЙДЕН для external_reference:', external_reference);
+        }
+      } else {
+        console.error('❌ external_reference отсутствует в webhook данных');
       }
       
       if (!booking) {
-        console.warn('⚠️  Booking не найден для external_reference:', external_reference);
-        return NextResponse.json({ message: 'Booking not found' }, { status: 200 });
+        console.warn('⚠️  Booking не найден, возвращаем OK но не обрабатываем');
+        return NextResponse.json({ message: 'Booking not found but webhook accepted' }, { status: 200 });
       }
-
-      console.log('✅ Booking найден:', booking.orderId);
 
       // Отправляем EMAIL КЛИЕНТУ после подтверждения оплаты
       try {
