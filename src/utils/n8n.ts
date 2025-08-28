@@ -1,8 +1,13 @@
 interface N8NSubmissionData {
+  orderId: string;
   name: string;
   phone: string;
   email: string;
   service: string;
+  paymentStatus: string;
+  preferenceId?: string;
+  mercadoPagoUrl?: string;
+  createdAt: string;
 }
 
 interface N8NResponse {
@@ -11,7 +16,6 @@ interface N8NResponse {
   error?: string;
 }
 
-// TODO: Replace with actual n8n webhook URL when provided
 const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || '';
 
 export const submitToN8N = async (data: N8NSubmissionData): Promise<N8NResponse> => {
@@ -30,12 +34,17 @@ export const submitToN8N = async (data: N8NSubmissionData): Promise<N8NResponse>
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        orderId: data.orderId,
         name: data.name,
         phone: data.phone,
         email: data.email,
         service: data.service,
+        paymentStatus: data.paymentStatus,
+        preferenceId: data.preferenceId,
+        mercadoPagoUrl: data.mercadoPagoUrl,
         source: 'gomanic-landing-br',
-        timestamp: new Date().toISOString(),
+        timestamp: data.createdAt,
+        type: 'booking_with_payment'
       }),
     });
 

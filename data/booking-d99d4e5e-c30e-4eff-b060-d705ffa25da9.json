@@ -1,0 +1,12 @@
+{
+  "id": "d578c517-3db0-46fd-ab5e-b850cb027321",
+  "orderId": "d99d4e5e-c30e-4eff-b060-d705ffa25da9",
+  "name": "João Teste",
+  "phone": "48999170099",
+  "email": "zarudesu@gmail.com",
+  "service": "manicure-gel",
+  "paymentStatus": "pending",
+  "createdAt": "2025-08-27T23:38:23.687Z",
+  "updatedAt": "2025-08-27T23:38:23.687Z",
+  "n8nSent": false
+}

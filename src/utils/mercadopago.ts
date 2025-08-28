@@ -1,7 +1,21 @@
-const { MercadoPagoConfig, Preference } = require('mercadopago');
-const { v4: uuidv4 } = require('uuid');
+import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { v4 as uuidv4 } from 'uuid';
 
-const SERVICES = {
+interface BookingData {
+  name: string;
+  phone: string;
+  email: string;
+  service: string;
+}
+
+interface ServicePrice {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+}
+
+const SERVICES: Record<string, ServicePrice> = {
   'manicure-gel': {
     id: 'manicure-gel',
     name: 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL',
@@ -22,7 +36,14 @@ const SERVICES = {
   }
 };
 
-async function createPaymentPreference(bookingData, orderId) {
+// Função para criar preferência de pagamento seguindo documentação oficial
+export async function createPaymentPreference(bookingData: BookingData, orderId: string): Promise<{
+  success: boolean;
+  preferenceId?: string;
+  initPoint?: string;
+  sandboxInitPoint?: string;
+  error?: string;
+}> {
   try {
     const service = SERVICES[bookingData.service];
     
@@ -33,8 +54,9 @@ async function createPaymentPreference(bookingData, orderId) {
     const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
     
     if (!accessToken || accessToken === 'TEST-your-access-token-here') {
-      console.warn('⚠️ MERCADOPAGO_ACCESS_TOKEN não configurado - usando MOCK');
+      console.warn('⚠️  MERCADOPAGO_ACCESS_TOKEN não configurado - retornando dados mock');
       
+      // Retornar dados mock para desenvolvimento
       return {
         success: true,
         preferenceId: `mock-pref-${orderId}`,
@@ -43,6 +65,7 @@ async function createPaymentPreference(bookingData, orderId) {
       };
     }
 
+    // Configuração oficial do MercadoPago
     const client = new MercadoPagoConfig({
       accessToken: accessToken,
       options: {
@@ -53,15 +76,18 @@ async function createPaymentPreference(bookingData, orderId) {
     
     const preference = new Preference(client);
 
+    // Body da preferência conforme documentação
     const preferenceBody = {
-      items: [{
-        id: service.id,
-        title: service.name,
-        description: service.description,
-        quantity: 1,
-        currency_id: 'BRL',
-        unit_price: service.price
-      }],
+      items: [
+        {
+          id: service.id,
+          title: service.name,
+          description: service.description,
+          quantity: 1,
+          currency_id: 'BRL',
+          unit_price: service.price
+        }
+      ],
       payer: {
         name: bookingData.name,
         email: bookingData.email,
@@ -76,7 +102,7 @@ async function createPaymentPreference(bookingData, orderId) {
         failure: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/erro?order=${orderId}`,
         pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/pendente?order=${orderId}`
       },
-      auto_return: 'approved',
+      auto_return: 'approved' as const,
       payment_methods: {
         excluded_payment_methods: [],
         excluded_payment_types: [],
@@ -91,14 +117,20 @@ async function createPaymentPreference(bookingData, orderId) {
     console.log('📝 Criando preferência MercadoPago:', {
       orderId,
       service: service.name,
-      price: service.price
+      price: service.price,
+      email: bookingData.email
     });
 
+    // Criar preferência usando método oficial do SDK
     const response = await preference.create({
       body: preferenceBody
     });
 
-    console.log('✅ Preferência criada:', response.id);
+    console.log('✅ Preferência criada com sucesso:', {
+      id: response.id,
+      init_point: response.init_point ? 'disponível' : 'não disponível',
+      sandbox_init_point: response.sandbox_init_point ? 'disponível' : 'não disponível'
+    });
 
     return {
       success: true,
@@ -107,26 +139,30 @@ async function createPaymentPreference(bookingData, orderId) {
       sandboxInitPoint: response.sandbox_init_point
     };
 
-  } catch (error) {
-    console.error('❌ Erro MercadoPago:', error);
+  } catch (error: any) {
+    console.error('❌ Erro ao criar preferência MercadoPago:', error);
+    
+    if (error.cause) {
+      console.error('Causa do erro:', error.cause);
+    }
+    if (error.response) {
+      console.error('Resposta da API:', error.response);
+    }
+
     return {
       success: false,
-      error: error.message || 'Erro desconhecido'
+      error: error.message || 'Erro desconhecido no MercadoPago'
     };
   }
 }
 
-function getServiceInfo(serviceId) {
+export function getServiceInfo(serviceId: string): ServicePrice | null {
   return SERVICES[serviceId] || null;
 }
 
-function getAllServices() {
+export function getAllServices(): ServicePrice[] {
   return Object.values(SERVICES);
 }
 
-module.exports = {
-  createPaymentPreference,
-  getServiceInfo,
-  getAllServices,
-  SERVICES
-};
+export { SERVICES, createPaymentPreference, getServiceInfo, getAllServices };
+export type { BookingData, ServicePrice };

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { trackFormSubmission } from '@/utils/analytics';
 import { 
-  validateBrazilianPhone, 
+  validateLatinAmericanPhone, 
   validateBrazilianName, 
   validateEmail,
-  formatBrazilianPhone
+  formatLatinAmericanPhone
 } from '@/utils/validation';
 import { openWhatsAppChat } from '@/utils/whatsapp';
 
@@ -48,7 +48,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
         validation = validateBrazilianName(value);
         break;
       case 'phone':
-        validation = validateBrazilianPhone(value);
+        validation = validateLatinAmericanPhone(value);
         break;
       case 'email':
         validation = validateEmail(value);
@@ -67,7 +67,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
     let processedValue = value;
     
     if (field === 'phone') {
-      processedValue = formatBrazilianPhone(value);
+      processedValue = formatLatinAmericanPhone(value);
     }
     
     setFormData(prev => ({ ...prev, [field]: processedValue }));
@@ -103,7 +103,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
     setError('');
 
     const nameValidation = validateBrazilianName(formData.name);
-    const phoneValidation = validateBrazilianPhone(formData.phone);
+    const phoneValidation = validateLatinAmericanPhone(formData.phone);
     const emailValidation = validateEmail(formData.email);
 
     setErrors({
@@ -143,10 +143,13 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
       const result = await response.json();
       
       if (result.success) {
-        setIsSubmitted(true);
+        // Redirect to MercadoPago
+        if (result.data.paymentUrl) {
+          window.location.href = result.data.paymentUrl;
+          return;
+        }
         
-        // Открываем WhatsApp чат
-        openWhatsAppChat(formData.name, formData.service);
+        setIsSubmitted(true);
         
         // Analytics
         if (typeof window !== 'undefined' && window.gtag) {
@@ -155,7 +158,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
           });
         }
       } else {
-        setError(result.error || 'Erro ao enviar formulário');
+        setError(result.error || 'Erro ao processar agendamento');
       }
     } catch (err) {
       setError('Erro de conexão. Tente novamente.');
@@ -186,7 +189,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
             textTransform: 'uppercase',
             fontWeight: 600
           }}>
-            ✅ LINK ENVIADO COM SUCESSO!
+            ✅ REDIRECIONANDO PARA PAGAMENTO
           </div>
           <p style={{
             color: '#FEFEFE',
@@ -195,7 +198,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
             opacity: 0.9,
             lineHeight: 1.6
           }}>
-            Seu link de agendamento foi enviado por WhatsApp e email. Complete a conversa no WhatsApp para finalizar.
+            Aguarde, você está sendo redirecionado para o MercadoPago para finalizar seu agendamento.
           </p>
         </div>
       </div>
@@ -263,7 +266,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 textTransform: 'uppercase',
                 opacity: 0.85
               }}>
-                WHATSAPP *
+                WHATSAPP / CELULAR *
               </label>
               <input
                 type="tel"
@@ -274,7 +277,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 className={`glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
                   errors.phone ? 'border-red-400' : ''
                 }`}
-                placeholder="(11) 99999-9999"
+                placeholder="+55 (48) 99999-9999"
                 style={{
                   background: 'rgba(255, 255, 255, 0.15)',
                   borderColor: errors.phone ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.2)',
@@ -466,7 +469,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 padding: '16px 48px'
               }}
             >
-              {isSubmitting ? 'ENVIANDO...' : 'RECEBER LINK NO WHATSAPP'}
+              {isSubmitting ? 'PROCESSANDO...' : 'CONTINUAR PARA PAGAMENTO'}
             </button>
           </div>
         </form>
