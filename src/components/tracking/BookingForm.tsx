@@ -342,41 +342,60 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
               </label>
               <div className="space-y-3">
                 {services.map((service) => (
-                  <div 
+                  <label 
                     key={service.id}
-                    className={`backdrop-blur-sm rounded-xl p-4 border cursor-pointer transition-all ${
+                    htmlFor={`service-${service.id}`}
+                    className={`backdrop-blur-sm rounded-xl p-4 border cursor-pointer transition-all block active:scale-[0.98] ${
                       formData.service === service.id 
-                        ? 'border-white/60' 
-                        : 'border-white/20 hover:border-white/40'
+                        ? 'border-white/80 shadow-lg' 
+                        : 'border-white/20 hover:border-white/50 hover:shadow-md'
                     }`}
                     style={{
                       background: formData.service === service.id 
-                        ? 'rgba(255, 255, 255, 0.25)' 
+                        ? 'rgba(255, 255, 255, 0.3)' 
                         : 'rgba(255, 255, 255, 0.1)',
-                      minHeight: '60px'
+                      minHeight: '70px',
+                      touchAction: 'manipulation'
                     }}
-                    onClick={() => setFormData({ ...formData, service: service.id })}
                   >
-                    <div className="flex items-start space-x-3">
-                      <input
-                        type="radio"
-                        name="service"
-                        value={service.id}
-                        checked={formData.service === service.id}
-                        onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="mt-1 text-white focus:ring-white/40"
-                        style={{ accentColor: '#FEFEFE' }}
-                      />
-                      <div className="flex-1">
+                    <div className="flex items-start space-x-4">
+                      <div className="relative flex items-center justify-center mt-1">
+                        <input
+                          type="radio"
+                          id={`service-${service.id}`}
+                          name="service"
+                          value={service.id}
+                          checked={formData.service === service.id}
+                          onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                          className="sr-only"
+                        />
+                        <div 
+                          className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${
+                            formData.service === service.id 
+                              ? 'border-white bg-white/20' 
+                              : 'border-white/50'
+                          }`}
+                        >
+                          {formData.service === service.id && (
+                            <div 
+                              className="w-2.5 h-2.5 rounded-full bg-white"
+                              style={{ 
+                                boxShadow: '0 0 8px rgba(255, 255, 255, 0.6)' 
+                              }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center gap-4">
                           <h4 style={{
                             color: '#FEFEFE',
                             fontFamily: 'Garet, sans-serif',
-                            fontSize: 11,
+                            fontSize: 12,
                             fontWeight: 600,
                             letterSpacing: '0.08em',
                             textTransform: 'uppercase',
-                            lineHeight: 1.2,
+                            lineHeight: 1.3,
                             flex: '1',
                             paddingRight: '8px'
                           }}>
@@ -385,7 +404,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                           <span style={{
                             color: '#FEFEFE',
                             fontFamily: 'Horizon, sans-serif',
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: 500,
                             letterSpacing: '0.03em',
                             flexShrink: 0,
@@ -396,26 +415,55 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </label>
                 ))}
               </div>
             </div>
 
             <div>
-              <div className="flex items-start space-x-3 p-4 rounded-xl border backdrop-blur-sm"
-                   style={{
-                     background: 'rgba(255, 255, 255, 0.08)',
-                     borderColor: 'rgba(255, 255, 255, 0.15)',
-                   }}>
-                <input
-                  type="checkbox"
-                  id="consentLGPD"
-                  checked={formData.consentLGPD}
-                  onChange={(e) => setFormData({ ...formData, consentLGPD: e.target.checked })}
-                  className="mt-1 rounded focus:ring-white/40"
-                  style={{ accentColor: '#FEFEFE' }}
-                />
-                <label htmlFor="consentLGPD" className="cursor-pointer" style={{
+              <label 
+                htmlFor="consentLGPD" 
+                className="flex items-start space-x-4 p-4 rounded-xl border backdrop-blur-sm cursor-pointer transition-all active:scale-[0.98] hover:border-white/25"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  borderColor: 'rgba(255, 255, 255, 0.15)',
+                  touchAction: 'manipulation'
+                }}
+              >
+                <div className="relative flex items-center justify-center mt-1">
+                  <input
+                    type="checkbox"
+                    id="consentLGPD"
+                    checked={formData.consentLGPD}
+                    onChange={(e) => setFormData({ ...formData, consentLGPD: e.target.checked })}
+                    className="sr-only"
+                  />
+                  <div 
+                    className={`w-5 h-5 rounded border-2 transition-all flex items-center justify-center ${
+                      formData.consentLGPD 
+                        ? 'border-white bg-white/20' 
+                        : 'border-white/50'
+                    }`}
+                  >
+                    {formData.consentLGPD && (
+                      <svg 
+                        className="w-3 h-3 text-white" 
+                        fill="currentColor" 
+                        viewBox="0 0 20 20"
+                        style={{ 
+                          filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.6))' 
+                        }}
+                      >
+                        <path 
+                          fillRule="evenodd" 
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
+                          clipRule="evenodd" 
+                        />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <div style={{
                   color: '#FEFEFE',
                   fontFamily: 'Garet, sans-serif',
                   fontSize: 13,
@@ -424,18 +472,22 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 }}>
                   Ao marcar esta opção, autorizo o tratamento dos meus dados pessoais para fins de agendamento e comunicação. 
                   <br />
-                  <a 
-                    href="/politica-privacidade" 
+                  <span 
                     className="underline hover:no-underline transition-all"
                     style={{ 
                       color: '#FEFEFE',
                       opacity: 0.8 
                     }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.open('/politica-privacidade', '_blank');
+                    }}
                   >
                     Leia nossa Política de Privacidade
-                  </a>
-                </label>
-              </div>
+                  </span>
+                </div>
+              </label>
             </div>
 
             {error && (
