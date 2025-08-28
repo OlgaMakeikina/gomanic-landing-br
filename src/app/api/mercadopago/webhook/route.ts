@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { bookingStorage } from '@/utils/storage';
 import { sendBookingEmail } from '@/utils/email';
+import { sendAdminNotification } from '@/utils/admin-email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,33 +20,67 @@ export async function POST(request: NextRequest) {
 
       console.log('💳 Payment webhook for payment ID:', paymentId);
       
-      // TODO: Verificar status do pagamento via API
-      // Por enquanto assumimos que é aprovado se chegou webhook
+      // Получаем дополнительные данные из webhook
+      const external_reference = data?.external_reference;
+      console.log('🔗 External reference (orderId):', external_reference);
       
-      // Buscar booking pelo paymentId ou external_reference
-      // Para isso precisamos salvar paymentId no booking
-      console.log('✅ Pagamento confirmado via webhook');
-      
-      // Отправляем ВТОРОЕ уведомление админу о подтвержденной покупке
-      try {
-        console.log('📧 Enviando notificação admin - COMPRA CONFIRMADA...');
-        
-        // TODO: Найти booking по paymentId и отправить подтверждение
-        // const booking = await bookingStorage.getBookingByPaymentId(paymentId);
-        // if (booking) {
-        //   await sendAdminNotification({
-        //     ...booking,
-        //     paymentId: paymentId,
-        //     status: 'COMPRA_CONFIRMADA'
-        //   });
-        //   await sendBookingEmail(booking.email, booking.name, booking.service, booking.orderId);
-        // }
-        
-        console.log('✅ Segunda notificação admin será implementada após estruturação storage');
-        
-      } catch (emailError) {
-        console.error('Erro ao enviar confirmação:', emailError);
+      // Ищем booking по external_reference (наш orderId)
+      let booking = null;
+      if (external_reference) {
+        booking = await bookingStorage.getBookingByExternalReference(external_reference);
       }
+      
+      if (!booking) {
+        console.warn('⚠️  Booking не найден для external_reference:', external_reference);
+        return NextResponse.json({ message: 'Booking not found' }, { status: 200 });
+      }
+
+      console.log('✅ Booking найден:', booking.orderId);
+
+      // Отправляем EMAIL КЛИЕНТУ после подтверждения оплаты
+      try {
+        await sendBookingEmail(booking.email, booking.name, booking.service, booking.orderId);
+        console.log('📧 Email клиенту отправлен после подтверждения оплаты');
+      } catch (emailError) {
+        console.error('❌ Ошибка отправки email клиенту:', emailError);
+      }
+
+      // Отправляем ВТОРОЕ уведомление админу о подтвержденной покупке  
+      try {
+        const serviceNames: Record<string, string> = {
+          'manicure-gel': 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL',
+          'alongamento-gel': 'ALONGAMENTO + MANICURE + ESMALTAÇÃO EM GEL',
+          'combo-completo': 'COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS'
+        };
+        const servicePrices: Record<string, string> = {
+          'manicure-gel': 'R$ 80', 
+          'alongamento-gel': 'R$ 119',
+          'combo-completo': 'R$ 160'
+        };
+
+        await sendAdminNotification({
+          orderId: booking.orderId,
+          customerName: booking.name,
+          customerEmail: booking.email,
+          customerPhone: booking.phone,
+          service: serviceNames[booking.service] || booking.service,
+          price: servicePrices[booking.service] || 'N/A',
+          paymentId: paymentId,
+          timestamp: new Date().toISOString(),
+          status: 'COMPRA_CONFIRMADA'
+        });
+        
+        console.log('📧 Segunda notificação admin enviada - COMPRA CONFIRMADA');
+        
+      } catch (adminEmailError) {
+        console.error('❌ Ошибка отправки второй notificação admin:', adminEmailError);
+      }
+
+      // Обновляем статус booking
+      await bookingStorage.updateBooking(booking.orderId, {
+        paymentStatus: 'approved',
+        mercadoPagoData: { paymentId, processedAt: new Date().toISOString() }
+      });
     }
 
     return NextResponse.json({ message: 'Webhook processed successfully' }, { status: 200 });

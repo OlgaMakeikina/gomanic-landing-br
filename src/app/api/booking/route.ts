@@ -86,13 +86,8 @@ export async function POST(request: NextRequest) {
       console.warn('❌ N8N sending failed:', n8nError);
     }
 
-    // 5. Enviar email após pagamento
-    try {
-      await sendBookingEmail(email, name, service, bookingRecord.orderId);
-      console.log('✅ Email enviado com sucesso');
-    } catch (emailError) {
-      console.warn('❌ Email sending failed:', emailError);
-    }
+    // 5. НЕ отправляем email клиенту здесь - только после подтверждения оплаты
+    console.log('📧 Email клиенту будет отправлен после подтверждения оплаты через webhook');
 
     // 6. Уведомить администраторов О ПОПЫТКЕ ПОКУПКИ
     try {

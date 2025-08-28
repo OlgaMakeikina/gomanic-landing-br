@@ -84,6 +84,16 @@ class BookingStorage {
     }
   }
 
+  async getBookingByExternalReference(externalRef: string): Promise<BookingRecord | null> {
+    try {
+      // external_reference в MercadoPago = наш orderId
+      return await this.getBooking(externalRef);
+    } catch (error) {
+      console.error('Error finding booking by external reference:', externalRef, error);
+      return null;
+    }
+  }
+
   async updateBooking(
     orderId: string, 
     updates: Partial<BookingRecord>
