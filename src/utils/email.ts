@@ -46,7 +46,7 @@ export const sendBookingEmail = async (
       throw new Error('Serviço não encontrado');
     }
 
-    const transporter = nodemailer.createTransporter(EMAIL_CONFIG);
+    const transporter = nodemailer.createTransport(EMAIL_CONFIG);
     const emailHTML = generateEmailHTML(name, service);
 
     const mailOptions = {
