@@ -22,12 +22,12 @@ export default function PaymentSuccess() {
           if (data) {
             setOrderInfo(data);
             // Получаем информацию о сервисе
-            const services = {
+            const services: Record<string, {name: string, price: string}> = {
               'manicure-gel': { name: 'Manicure + Gel', price: 'R$ 80' },
               'alongamento-gel': { name: 'Alongamento + Gel', price: 'R$ 119' },
               'combo-completo': { name: 'Combo Completo', price: 'R$ 160' }
             };
-            setServiceInfo(services[data.service] || null);
+            setServiceInfo(services[data.service as keyof typeof services] || null);
           }
         })
         .catch(err => console.warn('Erro ao carregar dados:', err));

@@ -96,12 +96,12 @@ export async function POST(request: NextRequest) {
 
     // 6. Notificar administradores
     try {
-      const serviceNames = {
+      const serviceNames: Record<string, string> = {
         'manicure-gel': 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL',
         'alongamento-gel': 'ALONGAMENTO + MANICURE + ESMALTAÇÃO EM GEL', 
         'combo-completo': 'COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS'
       };
-      const servicePrices = {
+      const servicePrices: Record<string, string> = {
         'manicure-gel': 'R$ 80',
         'alongamento-gel': 'R$ 119',
         'combo-completo': 'R$ 160'
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
         customerPhone: phone,
         service: serviceNames[service] || service,
         price: servicePrices[service] || 'N/A',
-        timestamp: bookingRecord.createdAt.toISOString()
+        timestamp: new Date().toISOString()
       });
       console.log('✅ Notificação admin enviada');
     } catch (adminEmailError) {
