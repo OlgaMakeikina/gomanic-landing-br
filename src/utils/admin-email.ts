@@ -9,7 +9,7 @@ interface AdminNotificationData {
   price: string;
   paymentId?: string;
   timestamp: string;
-  status?: 'TENTATIVA_COMPRA' | 'COMPRA_CONFIRMADA';
+  status?: 'TENTATIVA_COMPRA' | 'COMPRA_CONFIRMADA' | 'PAGAMENTO_REJEITADO';
 }
 
 const EMAIL_CONFIG = {
@@ -60,11 +60,12 @@ export const sendAdminNotification = async (data: AdminNotificationData): Promis
 const generateAdminEmailHTML = (data: AdminNotificationData): string => {
   const isAttempt = data.status === 'TENTATIVA_COMPRA';
   const isConfirmed = data.status === 'COMPRA_CONFIRMADA';
+  const isRejected = data.status === 'PAGAMENTO_REJEITADO';
   
-  const headerColor = isConfirmed ? '#16a34a' : '#f59e0b';
-  const headerText = isConfirmed ? '✅ COMPRA CONFIRMADA' : '🟡 TENTATIVA DE COMPRA';
-  const badgeColor = isConfirmed ? '#16a34a' : '#f59e0b';
-  const badgeText = isConfirmed ? 'PAGAMENTO CONFIRMADO' : 'AGUARDANDO PAGAMENTO';
+  const headerColor = isConfirmed ? '#16a34a' : isRejected ? '#dc2626' : '#f59e0b';
+  const headerText = isConfirmed ? '✅ COMPRA CONFIRMADA' : isRejected ? '❌ PAGAMENTO REJEITADO' : '🟡 TENTATIVA DE COMPRA';
+  const badgeColor = isConfirmed ? '#16a34a' : isRejected ? '#dc2626' : '#f59e0b';
+  const badgeText = isConfirmed ? 'PAGAMENTO CONFIRMADO' : isRejected ? 'PAGAMENTO REJEITADO' : 'AGUARDANDO PAGAMENTO';
   
   return `
     <!DOCTYPE html>
@@ -154,7 +155,7 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
         <div class="content">
           <div class="alert-badge" style="background: ${badgeColor};">${badgeText}</div>
           
-          <p>${isConfirmed ? 'Pagamento confirmado com sucesso!' : 'Nova tentativa de compra iniciada no site!'}</p>
+          <p>${isConfirmed ? 'Pagamento confirmado com sucesso!' : isRejected ? 'Pagamento foi rejeitado ou cancelado.' : 'Nova tentativa de compra iniciada no site!'}</p>
           
           <div class="customer-info">
             <h3 style="margin: 0 0 15px 0; color: #dc2626;">👤 Dados do Cliente</h3>
@@ -201,6 +202,8 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
             <p style="margin-bottom: 0;">
               ${isConfirmed 
                 ? 'O cliente receberá um email com link para WhatsApp. Aguarde o contato para agendamento!' 
+                : isRejected
+                ? 'Pagamento foi rejeitado. Cliente pode tentar novamente com outro método de pagamento.'
                 : 'Cliente está no processo de pagamento. Aguarde confirmação da compra.'}
             </p>
           </div>

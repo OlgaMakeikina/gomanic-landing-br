@@ -50,13 +50,47 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ message: 'External reference missing' }, { status: 200 });
         }
 
-        // Обрабатываем только approved платежи
-        if (payment_status !== 'approved') {
-          console.log('⏳ Платеж не approved, статус:', payment_status);
-          return NextResponse.json({ message: 'Payment not approved yet' }, { status: 200 });
+        // Обрабатываем разные статусы платежа
+        if (payment_status === 'approved') {
+          console.log('✅ Платеж APPROVED, обрабатываем...');
+          // Продолжаем с отправкой email клиенту и админу
+        } else if (payment_status === 'rejected') {
+          console.log('❌ Платеж REJECTED, обновляем статус');
+          await bookingStorage.updateBooking(external_reference, {
+            paymentStatus: 'rejected',
+            mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
+          });
+          
+          // Отправляем уведомление админу об отклоненном платеже
+          try {
+            await sendAdminNotification({
+              orderId: external_reference,
+              customerName: booking?.name || 'N/A',
+              customerEmail: booking?.email || 'N/A', 
+              customerPhone: booking?.phone || 'N/A',
+              service: booking?.service || 'Unknown',
+              price: 'N/A',
+              paymentId: paymentId,
+              timestamp: new Date().toISOString(),
+              status: 'PAGAMENTO_REJEITADO'
+            });
+            console.log('📧 Notificação admin enviada - PAGAMENTO REJEITADO');
+          } catch (error) {
+            console.error('❌ Erro ao enviar notificação de rejeição:', error);
+          }
+          
+          return NextResponse.json({ message: 'Payment rejected processed' }, { status: 200 });
+        } else if (payment_status === 'cancelled') {
+          console.log('🚫 Платеж CANCELLED, обновляем статус');
+          await bookingStorage.updateBooking(external_reference, {
+            paymentStatus: 'cancelled',
+            mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
+          });
+          return NextResponse.json({ message: 'Payment cancelled processed' }, { status: 200 });
+        } else {
+          console.log(`⏳ Платеж в статусе: ${payment_status}, пока не обрабатываем`);
+          return NextResponse.json({ message: `Payment status ${payment_status} noted` }, { status: 200 });
         }
-
-        console.log('✅ Платеж APPROVED, обрабатываем...');
 
       } catch (apiError) {
         console.error('❌ Ошибка при получении данных платежа:', apiError);
