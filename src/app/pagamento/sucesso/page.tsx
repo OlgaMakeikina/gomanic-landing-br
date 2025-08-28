@@ -121,7 +121,7 @@ export default function PaymentSuccess() {
               </p>
 
               <a
-                href={`https://wa.me/5548991970099?text=${encodeURIComponent(`Olá! Acabei de realizar o pagamento e gostaria de agendar minha sessão de manicure VIP. 💅✨\n\n📋 Dados do pedido:\n• Pedido: #${orderId}\n${paymentId ? `• Pagamento: #${paymentId}\n` : ''}${serviceInfo ? `• Serviço: ${serviceInfo.name}\n• Valor: ${serviceInfo.price}\n` : ''}• Status: Confirmado\n\nQuando posso agendar meu horário?`)}`}
+                href={`https://wa.me/5548991970099?text=${encodeURIComponent(`Olá! Acabei de realizar o pagamento e gostaria de agendar minha sessão de manicure VIP. 💅✨\n\n📋 Dados do pedido:\n• Pedido: #${orderId}\n${paymentId ? `• Pagamento: #${paymentId}\n` : ''}${serviceInfo ? `• Serviço: ${serviceInfo.name}\n• Valor: ${serviceInfo.price}\n` : ''}• Status: Confirmado`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 px-4 rounded-xl backdrop-blur-sm border transition-all hover:scale-105 flex items-center justify-center space-x-2"
