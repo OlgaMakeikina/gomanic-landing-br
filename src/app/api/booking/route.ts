@@ -3,6 +3,7 @@ import { createPaymentPreference } from '@/utils/mercadopago';
 import { bookingStorage } from '@/utils/storage';
 import { submitToN8N } from '@/utils/n8n';
 import { sendBookingEmail } from '@/utils/email';
+import { sendAdminNotification } from '@/utils/admin-email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,8 +62,29 @@ export async function POST(request: NextRequest) {
       mercadoPagoUrl: paymentUrl
     });
 
-    // 4. N8N webhook temporariamente desabilitado devido a 404
-    console.log('⚠️  N8N webhook desabilitado - URL retorna 404');
+    // 4. Enviar para N8N
+    try {
+      const n8nResult = await submitToN8N({
+        orderId: bookingRecord.orderId,
+        name,
+        phone,
+        email,
+        service,
+        paymentStatus: 'pending',
+        preferenceId: paymentResult.preferenceId,
+        mercadoPagoUrl: paymentUrl,
+        createdAt: bookingRecord.createdAt
+      });
+
+      if (n8nResult.success) {
+        await bookingStorage.updateBooking(bookingRecord.orderId, {
+          n8nSent: true
+        });
+        console.log('✅ N8N webhook enviado');
+      }
+    } catch (n8nError) {
+      console.warn('❌ N8N sending failed:', n8nError);
+    }
 
     // 5. Enviar email após pagamento
     try {
@@ -70,6 +92,33 @@ export async function POST(request: NextRequest) {
       console.log('✅ Email enviado com sucesso');
     } catch (emailError) {
       console.warn('❌ Email sending failed:', emailError);
+    }
+
+    // 6. Notificar administradores
+    try {
+      const serviceNames = {
+        'manicure-gel': 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL',
+        'alongamento-gel': 'ALONGAMENTO + MANICURE + ESMALTAÇÃO EM GEL', 
+        'combo-completo': 'COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS'
+      };
+      const servicePrices = {
+        'manicure-gel': 'R$ 80',
+        'alongamento-gel': 'R$ 119',
+        'combo-completo': 'R$ 160'
+      };
+
+      await sendAdminNotification({
+        orderId: bookingRecord.orderId,
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone,
+        service: serviceNames[service] || service,
+        price: servicePrices[service] || 'N/A',
+        timestamp: bookingRecord.createdAt.toISOString()
+      });
+      console.log('✅ Notificação admin enviada');
+    } catch (adminEmailError) {
+      console.warn('❌ Admin email failed:', adminEmailError);
     }
 
     console.log('Booking processed successfully, redirecting to:', paymentResult.initPoint);
