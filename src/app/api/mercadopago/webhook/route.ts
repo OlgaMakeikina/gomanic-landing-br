@@ -20,10 +20,48 @@ export async function POST(request: NextRequest) {
 
       console.log('💳 Payment webhook for payment ID:', paymentId);
       
-      // Получаем дополнительные данные из webhook
-      const external_reference = data?.external_reference;
-      console.log('🔗 External reference (orderId):', external_reference);
-      console.log('📋 Все данные data:', JSON.stringify(data, null, 2));
+      // ПОЛУЧАЕМ ДАННЫЕ ПЛАТЕЖА ЧЕРЕЗ API для получения external_reference
+      try {
+        console.log('📡 Получаем данные платежа через MercadoPago API...');
+        
+        const paymentResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+          headers: {
+            'Authorization': `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!paymentResponse.ok) {
+          console.error('❌ Ошибка получения данных платежа:', paymentResponse.status);
+          return NextResponse.json({ message: 'Payment API error' }, { status: 200 });
+        }
+
+        const paymentData = await paymentResponse.json();
+        console.log('📋 Данные платежа из API:', JSON.stringify(paymentData, null, 2));
+
+        const external_reference = paymentData.external_reference;
+        const payment_status = paymentData.status;
+        
+        console.log('🔗 External reference из API:', external_reference);
+        console.log('💰 Payment status:', payment_status);
+
+        if (!external_reference) {
+          console.warn('⚠️  external_reference отсутствует в данных платежа');
+          return NextResponse.json({ message: 'External reference missing' }, { status: 200 });
+        }
+
+        // Обрабатываем только approved платежи
+        if (payment_status !== 'approved') {
+          console.log('⏳ Платеж не approved, статус:', payment_status);
+          return NextResponse.json({ message: 'Payment not approved yet' }, { status: 200 });
+        }
+
+        console.log('✅ Платеж APPROVED, обрабатываем...');
+
+      } catch (apiError) {
+        console.error('❌ Ошибка при получении данных платежа:', apiError);
+        return NextResponse.json({ message: 'Payment API request failed' }, { status: 200 });
+      }
       
       // Ищем booking по external_reference (наш orderId)
       let booking = null;
