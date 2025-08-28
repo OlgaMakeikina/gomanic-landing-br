@@ -106,7 +106,7 @@ export default function PaymentSuccess() {
               </p>
 
               <a
-                href="https://wa.me/5548991700099?text=Olá! Acabei de realizar o pagamento e gostaria de agendar minha sessão de manicure VIP. 💅✨"
+                href="https://wa.me/5548991970099?text=Olá! Acabei de realizar o pagamento e gostaria de agendar minha sessão de manicure VIP. 💅✨"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 px-4 rounded-xl backdrop-blur-sm border transition-all hover:scale-105 flex items-center justify-center space-x-2"

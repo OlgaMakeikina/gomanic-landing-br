@@ -150,24 +150,18 @@ const generateEmailHTML = (name: string, service: ServiceLink): string => {
         <div class="content">
           <p>Olá, <strong>${name}</strong>!</p>
           
-          <p>Obrigado pelo seu interesse nos nossos serviços. Aqui está seu link personalizado para agendamento:</p>
+          <p>Parabéns! Seu pagamento foi confirmado com sucesso para:</p>
           
           <div class="service-info">
             <h3 style="margin: 0 0 10px 0; color: #444f55;">${service.name}</h3>
             <p style="margin: 0; font-size: 18px; font-weight: 600; color: #444f55;">${service.price}</p>
           </div>
           
-          <div style="text-align: center;">
-            <a href="${service.link}" class="cta-button">
-              🔗 AGENDAR AGORA
-            </a>
-          </div>
-          
           <p><strong>Próximo Passo:</strong></p>
           <div style="background: #e8f5e8; border-radius: 8px; padding: 15px; margin: 15px 0;">
-            <p style="margin: 0 0 10px 0;">Entre em contato conosco pelo WhatsApp para finalizar seu agendamento:</p>
+            <p style="margin: 0 0 10px 0;">Entre em contato conosco pelo WhatsApp para agendar seu horário preferido:</p>
             <div style="text-align: center;">
-              <a href="https://wa.me/5548991700099?text=Olá! Recebi o email com meu link de agendamento para ${service.name}. Gostaria de marcar meu horário! 💅✨" 
+              <a href="https://wa.me/5548991970099?text=Olá! Recebi o email de confirmação para ${service.name}. Gostaria de agendar meu horário! 💅✨" 
                  style="display: inline-block; background: #25D366; color: white !important; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; margin: 10px 0;">
                 📱 AGENDAR NO WHATSAPP
               </a>
