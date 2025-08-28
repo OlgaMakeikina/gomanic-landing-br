@@ -188,8 +188,8 @@ const generateEmailHTML = (name: string, service: ServiceInfo, orderId?: string)
           <div style="background: #f8fafc; border-left: 4px solid #16a34a; padding: 15px; margin: 20px 0; border-radius: 4px;">
             <p style="margin: 0; font-weight: 600; color: #374151;">📍 <strong>Endereço do Salão:</strong></p>
             <p style="margin: 5px 0 0 0; color: #4b5563;">
-              Rua das Flores, 123 - Centro<br>
-              Florianópolis - SC, 88010-000<br>
+              Sala 1, Rod. Armando Calil Bulos, 5795<br>
+              Ingleses Norte, Florianópolis - SC, 88058-001<br>
               📞 (48) 99197-0099
             </p>
           </div>
@@ -203,8 +203,8 @@ const generateEmailHTML = (name: string, service: ServiceInfo, orderId?: string)
         
         <div class="footer">
           <p><strong>Gomanic Brasil</strong><br>
-          Rua das Flores, 123 - Centro<br>
-          Florianópolis - SC, 88010-000<br>
+          Sala 1, Rod. Armando Calil Bulos, 5795<br>
+          Ingleses Norte, Florianópolis - SC, 88058-001<br>
           📞 (48) 99197-0099<br>
           📱 WhatsApp: +${whatsappNumber}</p>
         </div>
