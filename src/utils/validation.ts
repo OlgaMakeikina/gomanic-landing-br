@@ -52,7 +52,7 @@ export const validateLatinAmericanPhone = (phone: string): ValidationResult => {
   for (const code of ['593', '591', '595', '598', '506', '507']) {
     if (cleanPhone.startsWith(code)) {
       countryCode = code;
-      countryConfig = latinAmericanCodes[code];
+      countryConfig = latinAmericanCodes[code as keyof typeof latinAmericanCodes];
       break;
     }
   }
@@ -62,7 +62,7 @@ export const validateLatinAmericanPhone = (phone: string): ValidationResult => {
     for (const code of ['55', '54', '52', '57', '56', '51', '58']) {
       if (cleanPhone.startsWith(code)) {
         countryCode = code;
-        countryConfig = latinAmericanCodes[code];
+        countryConfig = latinAmericanCodes[code as keyof typeof latinAmericanCodes];
         break;
       }
     }

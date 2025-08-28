@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  gomanic-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SITE_URL=https://gomanic.com.br
+    env_file:
+      - .env.local
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data

@@ -1,41 +1,42 @@
-# Gomanic Brazil Landing - Vogue Style Edition
+# 🚀 GOMANIC BRASIL - PRODUCTION READY
 
-## 🎯 PRODUCTION READY LANDING PAGE v2.1.2
+## ✅ STATUS: ГОТОВ К VPS ДЕПЛОЮ
 
-Элегантный лендинг "Unhas pela Metade do Preço" в стиле модного журнала **Vogue** с **СТРОГИМ** соблюдением фирменной цветовой схемы Gomanic.
+### 🎯 СИСТЕМА:
+- **Next.js 14** + TypeScript + Tailwind
+- **MercadoPago** интеграция (MOCK → PROD)
+- **13 стран Латам** валидация телефонов
+- **JSON storage** + N8N webhook
+- **Email**: vip@gomanic.com.br
+- **WhatsApp**: +55 48 99917-0099
 
-### ⚡ ПОСЛЕДНИЕ ИЗМЕНЕНИЯ
-- **Упрощена форма бронирования**: только Name, Phone, Email
-- **N8N интеграция**: автоматическая отправка email с ссылками
-- **Исправлена интеграция**: ContactSection теперь использует BookingForm
-- **Улучшен UX**: более быстрое заполнение и четкие сообщения
-- **Исправлен analytics**: решен конфликт файлов .js/.ts
+### 📱 ПОДДЕРЖКА СТРАН:
+🇧🇷🇦🇷🇲🇽🇨🇴🇨🇱🇵🇪🇻🇪🇪🇨🇧🇴🇵🇾🇺🇾🇨🇷🇵🇦
 
----
+### 💳 УСЛУГИ:
+- Manicure + Gel: **R$ 80**  
+- Alongamento + Gel: **R$ 119**
+- Combo Completo: **R$ 160**
 
-## 🚀 QUICK START
+### 🔄 ФЛОУ:
+1. Форма → Валидация → Сохранение
+2. MercadoPago → Оплата → Webhook
+3. N8N + Email уведомления
 
-```bash
-# Установка зависимостей
-npm install
-
-# Запуск development сервера  
-npm run dev
-
-# URL (текущий активный порт)
-http://localhost:3004
+### ⚙️ ENV ПЕРЕМЕННЫЕ:
+```env
+NEXT_PUBLIC_SITE_URL=https://gomanic.com.br
+MERCADOPAGO_ACCESS_TOKEN=APP_USR-токен
+EMAIL_USER=vip@gomanic.com.br
+EMAIL_PASS=avlfB%66
+WHATSAPP_BUSINESS_NUMBER=5548991700099
+N8N_WEBHOOK_URL=webhook-url
 ```
 
----
+### 🌐 ССЫЛКИ:
+- **Git**: https://github.com/OlgaMakeikina/gomanic-landing-br
+- **MercadoPago**: https://www.mercadopago.com.br/developers
+- **Build**: `npm run build` ✅
+- **Порт**: 3000 (продакшн)
 
-## 🎨 ДИЗАЙН КОНЦЕПЦИЯ
-
-### Стиль Vogue Magazine:
-- **Editorial минимализм** с большими отступами
-- **Masthead типографика** с шрифтом Horizon
-- **Модульная сетка** с тонкими разделителями  
-- **Премиум компоненты** с элегантными hover эффектами
-
-### Строгая цветовая схема:
-- **#FEFEFE** - основной фон
-- **#F5
+**Commit**: `32d465b` - готов к VPS деплою

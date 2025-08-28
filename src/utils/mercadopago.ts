@@ -156,13 +156,13 @@ export async function createPaymentPreference(bookingData: BookingData, orderId:
   }
 }
 
-export function getServiceInfo(serviceId: string): ServicePrice | null {
+function getServiceInfo(serviceId: string): ServicePrice | null {
   return SERVICES[serviceId] || null;
 }
 
-export function getAllServices(): ServicePrice[] {
+function getAllServices(): ServicePrice[] {
   return Object.values(SERVICES);
 }
 
-export { SERVICES, createPaymentPreference, getServiceInfo, getAllServices };
+export { SERVICES, getServiceInfo, getAllServices };
 export type { BookingData, ServicePrice };

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceInfo } from '@/utils/mercadopago.js';
+import { getServiceInfo } from '@/utils/mercadopago';
 import { bookingStorage } from '@/utils/storage';
 
 export async function POST(request: NextRequest) {

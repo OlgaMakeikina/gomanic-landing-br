@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createPaymentPreference } from '@/utils/mercadopago.js';
+import { createPaymentPreference } from '@/utils/mercadopago';
 import { bookingStorage } from '@/utils/storage';
 import { submitToN8N } from '@/utils/n8n';
 import { sendBookingEmail } from '@/utils/email';
