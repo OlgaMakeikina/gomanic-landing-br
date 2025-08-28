@@ -26,19 +26,25 @@ export async function POST(request: NextRequest) {
       // Para isso precisamos salvar paymentId no booking
       console.log('✅ Pagamento confirmado via webhook');
       
-      // Aqui enviamos email após confirmação de pagamento
+      // Отправляем ВТОРОЕ уведомление админу о подтвержденной покупке
       try {
-        // Exemplo: buscar booking e enviar email
-        console.log('📧 Enviando email de confirmação...');
+        console.log('📧 Enviando notificação admin - COMPRA CONFIRMADA...');
         
-        // TODO: Implementar busca do booking e envio de email
+        // TODO: Найти booking по paymentId и отправить подтверждение
         // const booking = await bookingStorage.getBookingByPaymentId(paymentId);
         // if (booking) {
-        //   await sendBookingEmail(booking.email, booking.name, booking.service);
+        //   await sendAdminNotification({
+        //     ...booking,
+        //     paymentId: paymentId,
+        //     status: 'COMPRA_CONFIRMADA'
+        //   });
+        //   await sendBookingEmail(booking.email, booking.name, booking.service, booking.orderId);
         // }
         
+        console.log('✅ Segunda notificação admin será implementada após estruturação storage');
+        
       } catch (emailError) {
-        console.error('Erro ao enviar email de confirmação:', emailError);
+        console.error('Erro ao enviar confirmação:', emailError);
       }
     }
 

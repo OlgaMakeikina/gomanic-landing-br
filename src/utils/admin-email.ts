@@ -9,6 +9,7 @@ interface AdminNotificationData {
   price: string;
   paymentId?: string;
   timestamp: string;
+  status?: 'TENTATIVA_COMPRA' | 'COMPRA_CONFIRMADA';
 }
 
 const EMAIL_CONFIG = {
@@ -57,6 +58,14 @@ export const sendAdminNotification = async (data: AdminNotificationData): Promis
 };
 
 const generateAdminEmailHTML = (data: AdminNotificationData): string => {
+  const isAttempt = data.status === 'TENTATIVA_COMPRA';
+  const isConfirmed = data.status === 'COMPRA_CONFIRMADA';
+  
+  const headerColor = isConfirmed ? '#16a34a' : '#f59e0b';
+  const headerText = isConfirmed ? '✅ COMPRA CONFIRMADA' : '🟡 TENTATIVA DE COMPRA';
+  const badgeColor = isConfirmed ? '#16a34a' : '#f59e0b';
+  const badgeText = isConfirmed ? 'PAGAMENTO CONFIRMADO' : 'AGUARDANDO PAGAMENTO';
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -138,14 +147,14 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
     <body>
       <div class="container">
         <div class="header">
-          <h1 style="margin: 0; font-size: 24px;">🔔 NOVA COMPRA</h1>
+          <h1 style="margin: 0; font-size: 24px;">${headerText}</h1>
           <p style="margin: 10px 0 0 0; opacity: 0.9;">Gomanic Brasil - Notificação Admin</p>
         </div>
         
         <div class="content">
-          <div class="alert-badge">NOVA VENDA</div>
+          <div class="alert-badge" style="background: ${badgeColor};">${badgeText}</div>
           
-          <p>Uma nova compra foi realizada no site!</p>
+          <p>${isConfirmed ? 'Pagamento confirmado com sucesso!' : 'Nova tentativa de compra iniciada no site!'}</p>
           
           <div class="customer-info">
             <h3 style="margin: 0 0 15px 0; color: #dc2626;">👤 Dados do Cliente</h3>
@@ -189,7 +198,11 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
           
           <div style="background: #eff6ff; border-radius: 8px; padding: 15px; margin: 15px 0;">
             <h3 style="color: #1d4ed8; margin-top: 0;">📱 Próximos Passos</h3>
-            <p style="margin-bottom: 0;">O cliente receberá um email com link para WhatsApp. Aguarde o contato para agendamento!</p>
+            <p style="margin-bottom: 0;">
+              ${isConfirmed 
+                ? 'O cliente receberá um email com link para WhatsApp. Aguarde o contato para agendamento!' 
+                : 'Cliente está no processo de pagamento. Aguarde confirmação da compra.'}
+            </p>
           </div>
         </div>
         

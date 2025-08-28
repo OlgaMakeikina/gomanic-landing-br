@@ -33,7 +33,8 @@ const SERVICE_INFO: Record<string, ServiceInfo> = {
 export const sendBookingEmail = async (
   email: string,
   name: string,
-  serviceId: string
+  serviceId: string,
+  orderId?: string
 ): Promise<{ success: boolean; error?: string }> => {
   try {
     if (!EMAIL_CONFIG.auth.user || !EMAIL_CONFIG.auth.pass) {
@@ -47,7 +48,7 @@ export const sendBookingEmail = async (
     }
 
     const transporter = nodemailer.createTransport(EMAIL_CONFIG);
-    const emailHTML = generateEmailHTML(name, service);
+    const emailHTML = generateEmailHTML(name, service, orderId);
 
     const mailOptions = {
       from: `"Gomanic Brasil" <${EMAIL_CONFIG.auth.user}>`,

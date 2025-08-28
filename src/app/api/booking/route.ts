@@ -88,13 +88,13 @@ export async function POST(request: NextRequest) {
 
     // 5. Enviar email após pagamento
     try {
-      await sendBookingEmail(email, name, service);
+      await sendBookingEmail(email, name, service, bookingRecord.orderId);
       console.log('✅ Email enviado com sucesso');
     } catch (emailError) {
       console.warn('❌ Email sending failed:', emailError);
     }
 
-    // 6. Notificar administradores
+    // 6. Уведомить администраторов О ПОПЫТКЕ ПОКУПКИ
     try {
       const serviceNames: Record<string, string> = {
         'manicure-gel': 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL',
@@ -114,9 +114,10 @@ export async function POST(request: NextRequest) {
         customerPhone: phone,
         service: serviceNames[service] || service,
         price: servicePrices[service] || 'N/A',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        status: 'TENTATIVA_COMPRA' // Novo campo para diferenciar
       });
-      console.log('✅ Notificação admin enviada');
+      console.log('✅ Notificação admin enviada - TENTATIVA');
     } catch (adminEmailError) {
       console.warn('❌ Admin email failed:', adminEmailError);
     }
