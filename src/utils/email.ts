@@ -68,9 +68,9 @@ export const sendBookingEmail = async (
   }
 };
 
-const generateEmailHTML = (name: string, service: ServiceInfo): string => {
+const generateEmailHTML = (name: string, service: ServiceInfo, orderId?: string): string => {
   const whatsappNumber = process.env.WHATSAPP_BUSINESS_NUMBER || '5548991970099';
-  const whatsappMessage = encodeURIComponent(`Olá! Meu pagamento foi confirmado para ${service.name}. Gostaria de agendar meu horário! 💅✨`);
+  const whatsappMessage = encodeURIComponent(`Olá! Meu pagamento foi confirmado para ${service.name}. Gostaria de agendar meu horário! 💅✨\n\n📋 Dados:\n• Serviço: ${service.name}\n• Valor: ${service.price}\n${orderId ? `• Pedido: #${orderId}\n` : ''}• Status: Confirmado\n\nQuando posso agendar?`);
   
   return `
     <!DOCTYPE html>

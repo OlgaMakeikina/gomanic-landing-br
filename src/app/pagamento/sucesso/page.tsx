@@ -7,6 +7,7 @@ export default function PaymentSuccess() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [orderInfo, setOrderInfo] = useState<any>(null);
+  const [serviceInfo, setServiceInfo] = useState<any>(null);
   
   const orderId = searchParams?.get('order');
   const paymentId = searchParams?.get('payment_id');
@@ -14,8 +15,22 @@ export default function PaymentSuccess() {
 
   useEffect(() => {
     if (orderId) {
-      // Здесь можно загрузить информацию о заказе
-      setOrderInfo({ orderId, paymentId, status });
+      // Загружаем данные заказа
+      fetch(`/api/booking/${orderId}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            setOrderInfo(data);
+            // Получаем информацию о сервисе
+            const services = {
+              'manicure-gel': { name: 'Manicure + Gel', price: 'R$ 80' },
+              'alongamento-gel': { name: 'Alongamento + Gel', price: 'R$ 119' },
+              'combo-completo': { name: 'Combo Completo', price: 'R$ 160' }
+            };
+            setServiceInfo(services[data.service] || null);
+          }
+        })
+        .catch(err => console.warn('Erro ao carregar dados:', err));
     }
   }, [orderId, paymentId, status]);
 
@@ -106,7 +121,7 @@ export default function PaymentSuccess() {
               </p>
 
               <a
-                href="https://wa.me/5548991970099?text=Olá! Acabei de realizar o pagamento e gostaria de agendar minha sessão de manicure VIP. 💅✨"
+                href={`https://wa.me/5548991970099?text=${encodeURIComponent(`Olá! Acabei de realizar o pagamento e gostaria de agendar minha sessão de manicure VIP. 💅✨\n\n📋 Dados do pedido:\n• Pedido: #${orderId}\n${paymentId ? `• Pagamento: #${paymentId}\n` : ''}${serviceInfo ? `• Serviço: ${serviceInfo.name}\n• Valor: ${serviceInfo.price}\n` : ''}• Status: Confirmado\n\nQuando posso agendar meu horário?`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 px-4 rounded-xl backdrop-blur-sm border transition-all hover:scale-105 flex items-center justify-center space-x-2"
