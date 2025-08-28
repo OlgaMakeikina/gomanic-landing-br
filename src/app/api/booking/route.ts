@@ -84,12 +84,9 @@ export async function POST(request: NextRequest) {
       console.warn('N8N sending failed, but continuing:', n8nError);
     }
 
-    // 5. Enviar email em paralelo
-    try {
-      await sendBookingEmail(email, name, service);
-    } catch (emailError) {
-      console.warn('Email sending failed, but continuing:', emailError);
-    }
+    // 5. НЕ отправляем email здесь - только после успешной оплаты в webhook
+    // Email будет отправлен через MercadoPago webhook
+    console.log('Email будет отправлен после подтверждения оплаты через webhook');
 
     console.log('Booking processed successfully, redirecting to:', paymentResult.initPoint);
 
