@@ -34,7 +34,6 @@ export default function MobileStepCard({ passo, index }: ProcessStepCardProps) {
             <div className="md:flex-1">
               <h3 className="vogue-caption mb-3" style={{color: '#FEFEFE'}}>{passo.titulo}</h3>
               <p className="vogue-body text-base mb-3" style={{color: '#FEFEFE', fontWeight: 600}}>{passo.descricao}</p>
-              <p className="vogue-body text-sm mb-3" style={{color: '#FEFEFE', opacity: 0.9}}>{passo.detalhes}</p>
               {passo.seguranca && (
                 <div className="mt-4">
                   {index === 0 ? (
