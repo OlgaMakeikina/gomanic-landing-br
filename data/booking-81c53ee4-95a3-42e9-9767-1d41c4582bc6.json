@@ -1,0 +1,12 @@
+{
+  "id": "245ec5c8-58a2-489c-89df-6a62e5a23e8b",
+  "orderId": "81c53ee4-95a3-42e9-9767-1d41c4582bc6",
+  "name": "Test Real User",
+  "phone": "+5548999999999",
+  "email": "test.real@test.com",
+  "service": "manicure-gel",
+  "paymentStatus": "pending",
+  "createdAt": "2025-08-28T14:24:35.181Z",
+  "updatedAt": "2025-08-28T14:24:35.182Z",
+  "n8nSent": false
+}

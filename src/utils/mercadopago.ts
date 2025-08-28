@@ -96,13 +96,11 @@ export async function createPaymentPreference(bookingData: BookingData, orderId:
         }
       },
       external_reference: orderId,
-      notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/mercadopago/webhook`,
       back_urls: {
         success: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/sucesso?order=${orderId}`,
         failure: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/erro?order=${orderId}`,
         pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/pendente?order=${orderId}`
       },
-      auto_return: 'approved' as const,
       payment_methods: {
         excluded_payment_methods: [],
         excluded_payment_types: [],

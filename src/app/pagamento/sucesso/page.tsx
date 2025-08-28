@@ -57,7 +57,7 @@ export default function PaymentSuccess() {
                 letterSpacing: '0.02em'
               }}
             >
-              PAGAMENTO CONFIRMADO!
+              🎉 PAGAMENTO CONFIRMADO!
             </h1>
             
             <p 
@@ -70,8 +70,61 @@ export default function PaymentSuccess() {
                 lineHeight: 1.6
               }}
             >
-              Seu agendamento foi confirmado com sucesso. Você receberá um email com todos os detalhes em breve.
+              Parabéns! Seu pagamento foi aprovado com sucesso.<br/>
+              Você receberá todos os detalhes por email.
             </p>
+
+            <div 
+              className="bg-green-50/80 rounded-xl p-4 mb-6"
+              style={{ 
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(34, 197, 94, 0.2)'
+              }}
+            >
+              <h3 
+                className="mb-3"
+                style={{
+                  color: '#16a34a',
+                  fontFamily: 'Garet, sans-serif',
+                  fontSize: 16,
+                  fontWeight: 600
+                }}
+              >
+                ✨ Próximo Passo: Agendar sua sessão VIP
+              </h3>
+              
+              <p 
+                className="mb-4"
+                style={{
+                  color: '#444f55',
+                  fontFamily: 'Garet, sans-serif',
+                  fontSize: 14,
+                  lineHeight: 1.5
+                }}
+              >
+                Entre em contato conosco pelo WhatsApp para agendar seu horário preferido:
+              </p>
+
+              <a
+                href="https://wa.me/5548991700099?text=Olá! Acabei de realizar o pagamento e gostaria de agendar minha sessão de manicure VIP. 💅✨"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 px-4 rounded-xl backdrop-blur-sm border transition-all hover:scale-105 flex items-center justify-center space-x-2"
+                style={{
+                  background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                  color: 'white',
+                  fontFamily: 'Garet, sans-serif',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                  textDecoration: 'none',
+                  display: 'inline-flex'
+                }}
+              >
+                <span>📱</span>
+                <span>AGENDAR NO WHATSAPP</span>
+              </a>
+            </div>
 
             {orderInfo && (
               <div 

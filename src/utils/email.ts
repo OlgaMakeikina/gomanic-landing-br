@@ -163,12 +163,23 @@ const generateEmailHTML = (name: string, service: ServiceLink): string => {
             </a>
           </div>
           
+          <p><strong>Próximo Passo:</strong></p>
+          <div style="background: #e8f5e8; border-radius: 8px; padding: 15px; margin: 15px 0;">
+            <p style="margin: 0 0 10px 0;">Entre em contato conosco pelo WhatsApp para finalizar seu agendamento:</p>
+            <div style="text-align: center;">
+              <a href="https://wa.me/5548991700099?text=Olá! Recebi o email com meu link de agendamento para ${service.name}. Gostaria de marcar meu horário! 💅✨" 
+                 style="display: inline-block; background: #25D366; color: white !important; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; margin: 10px 0;">
+                📱 AGENDAR NO WHATSAPP
+              </a>
+            </div>
+          </div>
+          
           <p><strong>Importante:</strong></p>
           <ul>
             <li>Este link é personalizado para você</li>
-            <li>Clique no botão acima para ser direcionado ao sistema de agendamento</li>
-            <li>Escolha o melhor horário disponível</li>
-            <li>Você receberá uma confirmação por WhatsApp</li>
+            <li>Use o botão WhatsApp acima para agendamento rápido</li>
+            <li>Você receberá confirmação imediata</li>
+            <li>Horários disponíveis de segunda a sábado</li>
           </ul>
           
           <p>Caso tenha dúvidas, entre em contato conosco.</p>

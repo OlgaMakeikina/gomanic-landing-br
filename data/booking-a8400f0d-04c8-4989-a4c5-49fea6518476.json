@@ -1,0 +1,14 @@
+{
+  "id": "d2c86300-3359-4b3f-8c23-6215a216a578",
+  "orderId": "a8400f0d-04c8-4989-a4c5-49fea6518476",
+  "name": "Test User 2",
+  "phone": "+5548999999998",
+  "email": "test2@test.com",
+  "service": "alongamento-gel",
+  "paymentStatus": "pending",
+  "createdAt": "2025-08-28T14:18:19.441Z",
+  "updatedAt": "2025-08-28T14:18:19.442Z",
+  "n8nSent": false,
+  "preferenceId": "mock-pref-a8400f0d-04c8-4989-a4c5-49fea6518476",
+  "mercadoPagoUrl": "https://mercadopago.com.br/mock-payment"
+}

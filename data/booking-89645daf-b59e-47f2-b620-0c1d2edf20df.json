@@ -1,0 +1,14 @@
+{
+  "id": "e6366289-1871-4798-a1fb-f13948895a09",
+  "orderId": "89645daf-b59e-47f2-b620-0c1d2edf20df",
+  "name": "Test User",
+  "phone": "+5548999999999",
+  "email": "test@test.com",
+  "service": "manicure-gel",
+  "paymentStatus": "pending",
+  "createdAt": "2025-08-28T14:18:06.098Z",
+  "updatedAt": "2025-08-28T14:18:06.101Z",
+  "n8nSent": false,
+  "preferenceId": "mock-pref-89645daf-b59e-47f2-b620-0c1d2edf20df",
+  "mercadoPagoUrl": "https://mercadopago.com.br/mock-payment"
+}
