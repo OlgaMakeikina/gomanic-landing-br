@@ -12,7 +12,7 @@ export default function PromocoesMes2() {
         titulo: "MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL",
         precoNormal: "R$ 160",
         precoVIP: "R$ 80",
-        // pagamentoAntecipado: "R$ 24",
+        pagamentoAntecipado: "R$ 80",
         inclui: [
           "Ferramentas esterilizadas",
           "Nivelamento perfeito da unha",
@@ -23,7 +23,7 @@ export default function PromocoesMes2() {
         titulo: "ALONGAMENTO + MANICURE + ESMALTAÇÃO EM GEL",
         precoNormal: "R$ 200", 
         precoVIP: "R$ 119",
-        // pagamentoAntecipado: "R$ 36",
+        pagamentoAntecipado: "R$ 119",
         inclui: [
           "Modelagem de comprimento e formato",
           "Reforço da resistência",
@@ -34,7 +34,7 @@ export default function PromocoesMes2() {
         titulo: "COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS",
         precoNormal: "R$ 320",
         precoVIP: "R$ 160", 
-        // pagamentoAntecipado: "R$ 48",
+        pagamentoAntecipado: "R$ 160",
         inclui: [
           "Cuidados completos para mãos e pés",
           "Esmaltação premium de longa duração",
@@ -238,7 +238,7 @@ export default function PromocoesMes2() {
                     </div>
                     
                     {/* Предоплата */}
-                    {/* 
+                    
                     <div 
                       className="text-sm"
                       style={{ 
@@ -250,7 +250,7 @@ export default function PromocoesMes2() {
                     >
                       Pagamento antecipado: {promo.pagamentoAntecipado}
                     </div>
-                    */}
+                  
                   </div>
                   
                   {/* Кнопка раскрытия */}

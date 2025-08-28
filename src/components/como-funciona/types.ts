@@ -2,7 +2,6 @@ export interface ProcessStep {
   numero: string
   titulo: string
   descricao: string
-  detalhes: string
   seguranca: string
   imagem: string
 }

@@ -34,7 +34,7 @@ export default function DesktopStepCard({ passo, index }: ProcessStepCardProps) 
             </div>
             <h3 className="vogue-caption mb-4" style={{color: '#FEFEFE'}}>{passo.titulo}</h3>
             <p className="vogue-body text-lg mb-4" style={{color: '#FEFEFE', fontWeight: 600}}>{passo.descricao}</p>
-            <p className="vogue-body text-base mb-4" style={{color: '#FEFEFE', opacity: 0.9}}>{passo.detalhes}</p>
+           
             {passo.seguranca && (
               <div className="mt-6">
                 {index === 0 ? (
