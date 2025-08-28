@@ -183,8 +183,16 @@ const generateEmailHTML = (name: string, service: ServiceInfo, orderId?: string)
             <li>Seu pagamento está confirmado e processado</li>
             <li>Clique no botão WhatsApp acima para agendamento imediato</li>
             <li>Horários disponíveis: Segunda a Sábado, 8h às 18h</li>
-            <li>Localização será enviada após agendamento</li>
           </ul>
+
+          <div style="background: #f8fafc; border-left: 4px solid #16a34a; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <p style="margin: 0; font-weight: 600; color: #374151;">📍 <strong>Endereço do Salão:</strong></p>
+            <p style="margin: 5px 0 0 0; color: #4b5563;">
+              Rua das Flores, 123 - Centro<br>
+              Florianópolis - SC, 88010-000<br>
+              📞 (48) 99197-0099
+            </p>
+          </div>
           
           <p>Aguardamos você para sua sessão VIP! 💅✨</p>
           
@@ -195,7 +203,9 @@ const generateEmailHTML = (name: string, service: ServiceInfo, orderId?: string)
         
         <div class="footer">
           <p><strong>Gomanic Brasil</strong><br>
-          Manicure e Pedicure de alta qualidade<br>
+          Rua das Flores, 123 - Centro<br>
+          Florianópolis - SC, 88010-000<br>
+          📞 (48) 99197-0099<br>
           📱 WhatsApp: +${whatsappNumber}</p>
         </div>
       </div>
