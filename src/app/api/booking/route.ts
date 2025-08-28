@@ -61,32 +61,16 @@ export async function POST(request: NextRequest) {
       mercadoPagoUrl: paymentUrl
     });
 
-    // 4. Enviar para N8N em paralelo
+    // 4. N8N webhook temporariamente desabilitado devido a 404
+    console.log('⚠️  N8N webhook desabilitado - URL retorna 404');
+
+    // 5. Enviar email após pagamento
     try {
-      const n8nResult = await submitToN8N({
-        orderId: bookingRecord.orderId,
-        name,
-        phone,
-        email,
-        service,
-        paymentStatus: 'pending',
-        preferenceId: paymentResult.preferenceId,
-        mercadoPagoUrl: paymentUrl,
-        createdAt: bookingRecord.createdAt
-      });
-
-      if (n8nResult.success) {
-        await bookingStorage.updateBooking(bookingRecord.orderId, {
-          n8nSent: true
-        });
-      }
-    } catch (n8nError) {
-      console.warn('N8N sending failed, but continuing:', n8nError);
+      await sendBookingEmail(email, name, service);
+      console.log('✅ Email enviado com sucesso');
+    } catch (emailError) {
+      console.warn('❌ Email sending failed:', emailError);
     }
-
-    // 5. НЕ отправляем email здесь - только после успешной оплаты в webhook
-    // Email будет отправлен через MercadoPago webhook
-    console.log('Email будет отправлен после подтверждения оплаты через webhook');
 
     console.log('Booking processed successfully, redirecting to:', paymentResult.initPoint);
 
