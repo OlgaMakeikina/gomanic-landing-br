@@ -181,7 +181,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
         <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl" />
         <div className="absolute inset-0 bg-gradient-to-tl from-black/20 via-transparent to-black/10 rounded-2xl" />
         
-        <div className="relative z-10 p-8">
+        <div className="relative z-10 p-4 sm:p-8">
           <div className="text-green-400 mb-4" style={{
             fontFamily: 'Garet, sans-serif', 
             fontSize: 14,
@@ -218,9 +218,9 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
       <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl" />
       <div className="absolute inset-0 bg-gradient-to-tl from-black/20 via-transparent to-black/10 rounded-2xl" />
       
-      <div className="relative z-10 p-8">
+      <div className="relative z-10 p-4 sm:p-8">
         <form onSubmit={handleSubmit}>
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div>
               <label className="block mb-3" style={{
                 color: '#FEFEFE',
@@ -238,7 +238,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 onBlur={(e) => validateField('name', e.target.value)}
-                className={`glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
+                className={`glass-input w-full px-3 py-2 sm:px-4 sm:py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
                   errors.name ? 'border-red-400' : ''
                 }`}
                 placeholder="Seu nome completo"
@@ -274,7 +274,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 onBlur={(e) => validateField('phone', e.target.value)}
-                className={`glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
+                className={`glass-input w-full px-3 py-2 sm:px-4 sm:py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
                   errors.phone ? 'border-red-400' : ''
                 }`}
                 placeholder="+55 (48) 99999-9999"
@@ -310,7 +310,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 onBlur={(e) => validateField('email', e.target.value)}
-                className={`glass-input w-full px-4 py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
+                className={`glass-input w-full px-3 py-2 sm:px-4 sm:py-3 rounded-xl border backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-white/40 ${
                   errors.email ? 'border-red-400' : ''
                 }`}
                 placeholder="seu@email.com"
@@ -340,12 +340,12 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
               }}>
                 ESCOLHA SUA OPÇÃO *
               </label>
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {services.map((service) => (
                   <label 
                     key={service.id}
                     htmlFor={`service-${service.id}`}
-                    className={`backdrop-blur-sm rounded-xl p-4 border cursor-pointer transition-all block active:scale-[0.98] ${
+                    className={`backdrop-blur-sm rounded-xl p-3 sm:p-4 border cursor-pointer transition-all block active:scale-[0.98] ${
                       formData.service === service.id 
                         ? 'border-white/80 shadow-lg' 
                         : 'border-white/20 hover:border-white/50 hover:shadow-md'
@@ -423,7 +423,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
             <div>
               <label 
                 htmlFor="consentLGPD" 
-                className="flex items-start space-x-4 p-4 rounded-xl border backdrop-blur-sm cursor-pointer transition-all active:scale-[0.98] hover:border-white/25"
+                className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl border backdrop-blur-sm cursor-pointer transition-all active:scale-[0.98] hover:border-white/25"
                 style={{
                   background: 'rgba(255, 255, 255, 0.08)',
                   borderColor: 'rgba(255, 255, 255, 0.15)',
@@ -518,7 +518,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 fontWeight: 600,
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
-                padding: '16px 48px'
+                padding: '12px 24px'
               }}
             >
               {isSubmitting ? 'PROCESSANDO...' : 'CONTINUAR PARA PAGAMENTO'}

@@ -18,7 +18,9 @@ export default function PortfolioHeader() {
           fontSize: 28,
         }}
       >
-        SUAS UNHAS ESTARÃO ASSIM JÁ AMANHÃ
+        SUAS UNHAS ESTARÃO ASSIM
+        <br />
+        JÁ AMANHÃ
       </h2>
 
       <p
