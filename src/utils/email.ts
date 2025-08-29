@@ -16,18 +16,9 @@ const EMAIL_CONFIG = {
 };
 
 const SERVICE_INFO: Record<string, ServiceInfo> = {
-  'manicure-gel': {
-    name: 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL',
-    price: 'R$ 80'
-  },
-  'alongamento-gel': {
-    name: 'ALONGAMENTO + MANICURE + ESMALTAÇÃO EM GEL', 
-    price: 'R$ 119'
-  },
-  'combo-completo': {
-    name: 'COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS',
-    price: 'R$ 160'
-  }
+  'manicure-gel': { name: 'Manicure + Gel', price: 'R$ 80' },
+  'alongamento-gel': { name: 'Alongamento + Gel', price: 'R$ 119' },
+  'combo-completo': { name: 'Combo Completo', price: 'R$ 160' }
 };
 
 export const sendBookingEmail = async (
@@ -37,31 +28,82 @@ export const sendBookingEmail = async (
   orderId?: string
 ): Promise<{ success: boolean; error?: string }> => {
   try {
+    console.log('📧 Iniciando envio de email para:', email);
+    console.log('📧 Configuração SMTP:', {
+      host: EMAIL_CONFIG.host,
+      port: EMAIL_CONFIG.port,
+      secure: EMAIL_CONFIG.secure,
+      user: EMAIL_CONFIG.auth.user
+    });
+
     if (!EMAIL_CONFIG.auth.user || !EMAIL_CONFIG.auth.pass) {
-      console.warn('Email não configurado - pulando envio');
-      return { success: false, error: 'Email não configurado' };
+      const error = 'Email não configurado - credenciais ausentes';
+      console.error('❌', error);
+      return { success: false, error };
     }
 
     const service = SERVICE_INFO[serviceId];
     if (!service) {
-      throw new Error('Serviço não encontrado');
+      const error = `Serviço não encontrado: ${serviceId}`;
+      console.error('❌', error);
+      return { success: false, error };
     }
 
-    const transporter = nodemailer.createTransport(EMAIL_CONFIG);
+    console.log('📧 Criando transporter...');
+    const transporter = nodemailer.createTransporter(EMAIL_CONFIG);
+    
+    console.log('📧 Verificando conexão SMTP...');
+    await transporter.verify();
+    console.log('✅ Conexão SMTP verificada com sucesso');
+
     const emailHTML = generateEmailHTML(name, service, orderId);
 
     const mailOptions = {
-      from: `"Gomanic Brasil" <${EMAIL_CONFIG.auth.user}>`,
+      from: `"Gomanic Brasil - Confirmação" <${EMAIL_CONFIG.auth.user}>`,
       to: email,
-      subject: `🎉 Pagamento Confirmado - ${service.name}`,
-      html: emailHTML
+      subject: `✅ Pagamento Confirmado - ${service.name}`,
+      html: emailHTML,
+      headers: {
+        'Reply-To': EMAIL_CONFIG.auth.user,
+        'X-Mailer': 'Gomanic Brasil System',
+        'X-Priority': '1',
+        'Message-ID': `<${Date.now()}.${Math.random()}@gomanic.com.br>`
+      }
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log('✅ Email enviado com sucesso para:', email);
+    console.log('📧 Enviando email com configurações:', {
+      from: mailOptions.from,
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      hasHtml: !!mailOptions.html
+    });
+
+    const info = await transporter.sendMail(mailOptions);
+    
+    console.log('✅ Email enviado com sucesso - DETALHES COMPLETOS:', {
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+      response: info.response,
+      envelope: info.envelope
+    });
+
+    if (info.rejected && info.rejected.length > 0) {
+      console.warn('⚠️  Alguns emails foram rejeitados:', info.rejected);
+    }
+
     return { success: true };
   } catch (error) {
-    console.error('❌ Erro ao enviar email:', error);
+    console.error('❌ Erro detalhado ao enviar email:', {
+      email: email,
+      error: error instanceof Error ? error.message : 'Erro desconhecido',
+      code: (error as any)?.code,
+      command: (error as any)?.command,
+      response: (error as any)?.response,
+      responseCode: (error as any)?.responseCode,
+      stack: error instanceof Error ? error.stack : 'No stack'
+    });
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Erro desconhecido'
@@ -126,56 +168,50 @@ const generateEmailHTML = (name: string, service: ServiceInfo, orderId?: string)
           display: inline-block;
           background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
           color: white !important;
-          text-decoration: none;
-          padding: 15px 25px;
-          border-radius: 25px;
+          text-decoration: none !important;
+          padding: 15px 30px;
+          border-radius: 8px;
           font-weight: 600;
           text-align: center;
           margin: 20px 0;
+          transition: transform 0.2s;
+        }
+        .whatsapp-button:hover {
+          transform: translateY(-2px);
         }
         .footer {
-          background: #fdfffe;
+          background: #f8fafc;
           text-align: center;
           padding: 20px;
           font-size: 14px;
           color: #666;
-        }
-        .highlight {
-          background: #e8f5e8;
-          border-radius: 8px;
-          padding: 15px;
-          margin: 15px 0;
         }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="header">
-          <h1 style="margin: 0; font-size: 28px;">GOMANIC BRASIL</h1>
-          <p style="margin: 10px 0 0 0; opacity: 0.9;">Seu pagamento foi confirmado!</p>
+          <h1 style="margin: 0; font-size: 24px;">Pagamento Confirmado!</h1>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">Obrigado pela sua compra, ${name}!</p>
         </div>
         
         <div class="content">
-          <div class="success-badge">✅ PAGAMENTO APROVADO</div>
+          <div class="success-badge">PAGAMENTO APROVADO</div>
           
-          <p>Olá, <strong>${name}</strong>!</p>
-          
-          <p>🎉 <strong>Parabéns!</strong> Seu pagamento foi confirmado com sucesso para:</p>
+          <p>Seu pagamento foi processado com sucesso. Agora você pode agendar seu horário!</p>
           
           <div class="service-info">
-            <h3 style="margin: 0 0 10px 0; color: #16a34a;">${service.name}</h3>
-            <p style="margin: 0; font-size: 18px; font-weight: 600; color: #444f55;">${service.price}</p>
+            <h3 style="color: #16a34a; margin-top: 0;">Serviço Adquirido</h3>
+            <p><strong>Serviço:</strong> ${service.name}</p>
+            <p><strong>Valor:</strong> ${service.price}</p>
+            ${orderId ? `<p><strong>Pedido:</strong> #${orderId}</p>` : ''}
           </div>
           
-          <div class="highlight">
-            <h3 style="color: #16a34a; margin-top: 0;">🗓️ Próximo Passo: Agendar sua Sessão</h3>
-            <p style="margin-bottom: 15px;">Entre em contato conosco pelo WhatsApp para escolher seu horário preferido:</p>
-            
-            <div style="text-align: center;">
-              <a href="https://wa.me/${whatsappNumber}?text=${whatsappMessage}" class="whatsapp-button">
-                📱 AGENDAR NO WHATSAPP
-              </a>
-            </div>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://wa.me/${whatsappNumber}?text=${whatsappMessage}" 
+               class="whatsapp-button">
+              📱 AGENDAR PELO WHATSAPP
+            </a>
           </div>
           
           <p><strong>📋 Informações importantes:</strong></p>
@@ -194,7 +230,7 @@ const generateEmailHTML = (name: string, service: ServiceInfo, orderId?: string)
             </p>
           </div>
           
-          <p>Aguardamos você para sua sessão VIP! 💅✨</p>
+          <p>Aguardamos você para sua sessão VIP!</p>
           
           <p style="font-size: 12px; color: #888; margin-top: 30px;">
             Em caso de dúvidas, responda este email ou entre em contato pelo WhatsApp.
