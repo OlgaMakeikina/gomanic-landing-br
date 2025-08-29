@@ -14,7 +14,7 @@ export default function DesktopClientsGallery({ colors }: DesktopClientsGalleryP
         {/* Левое верхнее фото - новое изображение */}
         <figure className="col-span-2 row-span-2 overflow-hidden rounded-2xl group">
           <img
-            src="/images/clients/0_0 (1).jpeg"
+            src="/images/clients/0_3.jpeg"
             alt="Cliente satisfeita - resultado perfeito"
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
             style={{filter: 'brightness(1.1) contrast(1.05) saturate(1.2)'}}

@@ -15,7 +15,7 @@ export default function MobileClientsGallery({ colors }: MobileClientsGalleryPro
         {/* Фото 1 - новое изображение */}
         <figure className="aspect-square overflow-hidden rounded-2xl group">
           <img
-            src="/images/clients/0_0 (1).jpeg"
+            src="/images/clients/0_3.jpeg"
             alt="Cliente satisfeita - resultado perfeito"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             style={{filter: 'brightness(1.1) contrast(1.05) saturate(1.2)'}}
