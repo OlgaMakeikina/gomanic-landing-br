@@ -2,7 +2,20 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    domains: ['localhost', 'your-domain.com.br'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https', 
+        hostname: 'gomanic.com.br',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      }
+    ],
     unoptimized: false,
     formats: ['image/webp', 'image/avif'],
   },
