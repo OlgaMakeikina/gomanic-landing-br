@@ -86,7 +86,7 @@ export default function HeroTitle({ title, subtitle, content, align = 'center', 
                     espaco de atendimento:
                   </p>
                   <p className="text-lg text-white font-bold tracking-wide">
-                    UNHAS 5 ESTRELAS
+                   ESTÚDIO UNHAS 5 ESTRELAS, INGLESES
                   </p>
                 </div>
               </div>
