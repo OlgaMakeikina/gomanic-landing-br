@@ -1,13 +1,13 @@
 export const portfolioData = [
-  "0_0 (2).jpeg",
-  "0_0 (4) (1).jpeg", 
-  "0_1 (13).jpeg",
+  "0_0 (4) (1).jpeg",
+  "0_1 (13).jpeg", 
   "0_2 (3) (1).jpeg",
   "0_2 (4).jpeg",
   "0_2 (6) (1).jpeg",
   "0_3 (23).jpeg",
   "0_3 (24).jpeg",
-  "0_3 (25) (1).jpeg"
+  "0_3 (25) (1).jpeg",
+  "0_3 (3) (1).jpeg"
 ]
 
 export const beforeAfterData = [
