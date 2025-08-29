@@ -64,13 +64,12 @@ export default function SegurancaQualidade(): JSX.Element {
 
           <h2
             id="seguranca-heading"
-            className="uppercase mb-6"
+            className="uppercase mb-6 text-2xl sm:text-2xl md:text-3xl lg:text-5xl"
             style={{
               color: COLORS.white,
               fontFamily: 'Horizon, sans-serif',
               letterSpacing: '0.12em',
               fontWeight: 500,
-              fontSize: 28,
             }}
           >
             POR QUE MILHARES DE CLIENTES NOS ESCOLHEM?

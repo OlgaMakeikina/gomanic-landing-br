@@ -175,8 +175,7 @@ export default function VipExclusivo() {
           </div>
           <h2 id="vip-heading" className="vogue-subhead mb-8" 
               style={{
-                color: '#FEFEFE',
-                textShadow: '0 4px 8px rgba(0, 0, 0, 0.4)'
+                color: '#FEFEFE'
               }}>
             PASSE VIP = CLUBE EXCLUSIVO
           </h2>

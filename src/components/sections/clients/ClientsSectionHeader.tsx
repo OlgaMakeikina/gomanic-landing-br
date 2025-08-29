@@ -18,13 +18,12 @@ export default function ClientsSectionHeader({ colors }: ClientsSectionHeaderPro
 
       <h2
         id="clientes-heading"
-        className="uppercase mb-6"
+        className="uppercase mb-6 text-2xl sm:text-2xl md:text-3xl lg:text-5xl"
         style={{
           color: colors.white,
           fontFamily: "Horizon, sans-serif",
           letterSpacing: "0.12em",
           fontWeight: 500,
-          fontSize: 28,
         }}
       >
         NOSSOS CLIENTES SATISFEITOS

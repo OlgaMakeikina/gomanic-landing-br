@@ -25,13 +25,12 @@ export default function SocialProof() {
 
           <h2
             id="social-heading"
-            className="uppercase mb-6"
+            className="uppercase mb-6 text-2xl sm:text-2xl md:text-3xl lg:text-5xl"
             style={{
               color: COLORS.dark,
               fontFamily: "Horizon, sans-serif",
               letterSpacing: "0.12em",
               fontWeight: 500,
-              fontSize: 28,
             }}
           >
             O QUE FALAM DE NÓS
