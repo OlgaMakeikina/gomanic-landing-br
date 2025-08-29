@@ -86,7 +86,10 @@ export default function HeroTitle({ title, subtitle, content, align = 'center', 
                     espaco de atendimento:
                   </p>
                   <p className="text-lg text-white font-bold tracking-wide">
-                   ESTÚDIO UNHAS 5 ESTRELAS, INGLESES
+                    ESTÚDIO UNHAS 5 ESTRELAS
+                  </p>
+                  <p className="text-sm text-white/80 uppercase tracking-wider font-medium">
+                    INGLESES
                   </p>
                 </div>
               </div>
@@ -102,12 +105,15 @@ export default function HeroTitle({ title, subtitle, content, align = 'center', 
                   height={32}
                   className="opacity-90"
                 />
-                <div className="text-left">
+                <div className="text-center">
                   <p className="text-xs text-white/80 uppercase tracking-wider font-medium">
                     espaco de atendimento:
                   </p>
                   <p className="text-sm text-white font-bold tracking-wide">
-                    UNHAS 5 ESTRELAS
+                    ESTÚDIO UNHAS 5 ESTRELAS
+                  </p>
+                  <p className="text-xs text-white/80 uppercase tracking-wider font-medium">
+                    INGLESES
                   </p>
                 </div>
               </div>
