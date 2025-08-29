@@ -49,8 +49,8 @@ export const sendBookingEmail = async (
       return { success: false, error };
     }
 
-    console.log('📧 Criando transporter...');
-    const transporter = nodemailer.createTransporter(EMAIL_CONFIG);
+    console.log('Criando transporter...');
+    const transporter = nodemailer.createTransport(EMAIL_CONFIG);
     
     console.log('📧 Verificando conexão SMTP...');
     await transporter.verify();
