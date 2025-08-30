@@ -12,7 +12,8 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
-        HOSTNAME: '0.0.0.0'
+        HOSTNAME: '0.0.0.0',
+        TZ: 'America/Sao_Paulo'
       },
       log_file: '/home/zardes/gomanic-landing-br/logs/combined.log',
       out_file: '/home/zardes/gomanic-landing-br/logs/out.log',
