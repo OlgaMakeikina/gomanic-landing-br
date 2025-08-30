@@ -75,7 +75,7 @@ export default function HeroTitle({ title, subtitle, content, align = 'center', 
             <div className="hidden lg:flex lg:justify-end lg:mt-4 lg:mb-6">
               <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm rounded-lg px-6 py-4 border border-white/10">
                 <Image
-                  src="/images/contacts/icons8-location-100 (1).png"
+                  src="/images/contacts/icons8-location-100.png"
                   alt="Location"
                   width={40}
                   height={40}
@@ -99,7 +99,7 @@ export default function HeroTitle({ title, subtitle, content, align = 'center', 
             <div className="lg:hidden flex justify-center mt-4 mb-6">
               <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/10">
                 <Image
-                  src="/images/contacts/icons8-location-100 (1).png"
+                  src="/images/contacts/icons8-location-100.png"
                   alt="Location"
                   width={32}
                   height={32}

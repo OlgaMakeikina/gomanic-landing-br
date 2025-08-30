@@ -13,19 +13,19 @@ export default function SegurancaQualidade(): JSX.Element {
 
   const certificacoes = [
     {
-      imagem: '/images/higiene/0_3 (13).jpeg',
+      imagem: '/images/higiene/0_3_13.jpeg',
       titulo: 'Higienização Profissional',
 
       detalhes: 'Protocolo hospitalar de limpeza',
     },
     {
-      imagem: '/images/higiene/0_3 (21).jpeg',
+      imagem: '/images/higiene/0_3_21.jpeg',
       titulo: 'Materiais Certificados',
 
       detalhes: 'Importados e testados dermatologicamente',
     },
     {
-      imagem: '/images/higiene/0_0 (20).jpeg',
+      imagem: '/images/higiene/0_0_20.jpeg',
       titulo: 'Segurança Total',
       detalhes: 'Ambiente controlado e monitorado',
     },
@@ -169,7 +169,7 @@ export default function SegurancaQualidade(): JSX.Element {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
               <img
-                src="/images/masters/0_0 (15).jpeg"
+                src="/images/masters/0_0_15.jpeg"
                 alt="Instrutor Internacional 1"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 style={{ filter: 'brightness(1.1) contrast(1.05)' }}
@@ -192,7 +192,7 @@ export default function SegurancaQualidade(): JSX.Element {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
               <img
-                src="/images/masters/0_0 (22).jpeg"
+                src="/images/masters/0_0_22.jpeg"
                 alt="Instrutor Internacional 2"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 style={{ filter: 'brightness(1.1) contrast(1.05)' }}
@@ -215,7 +215,7 @@ export default function SegurancaQualidade(): JSX.Element {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
               <img
-                src="/images/masters/0_3 (20).jpeg"
+                src="/images/masters/0_3_20.jpeg"
                 alt="Certificados"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 style={{ filter: 'brightness(1.1) contrast(1.05)' }}

@@ -9,7 +9,7 @@ interface AdminNotificationData {
   price: string;
   paymentId?: string;
   timestamp: string;
-  status?: 'TENTATIVA_COMPRA' | 'COMPRA_CONFIRMADA' | 'PAGAMENTO_REJEITADO';
+  status?: 'TENTATIVA_COMPRA' | 'COMPRA_CONFIRMADA' | 'PAGAMENTO_REJEITADO' | 'PAGAMENTO_CANCELADO' | 'PAGAMENTO_REEMBOLSADO' | 'PAGAMENTO_CONTESTADO';
 }
 
 const EMAIL_CONFIG = {
@@ -61,11 +61,41 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
   const isAttempt = data.status === 'TENTATIVA_COMPRA';
   const isConfirmed = data.status === 'COMPRA_CONFIRMADA';
   const isRejected = data.status === 'PAGAMENTO_REJEITADO';
+  const isCancelled = data.status === 'PAGAMENTO_CANCELADO';
+  const isRefunded = data.status === 'PAGAMENTO_REEMBOLSADO';
+  const isChargeback = data.status === 'PAGAMENTO_CONTESTADO';
   
-  const headerColor = isConfirmed ? '#16a34a' : isRejected ? '#dc2626' : '#f59e0b';
-  const headerText = isConfirmed ? '✅ COMPRA CONFIRMADA' : isRejected ? '❌ PAGAMENTO REJEITADO' : '🟡 TENTATIVA DE COMPRA';
-  const badgeColor = isConfirmed ? '#16a34a' : isRejected ? '#dc2626' : '#f59e0b';
-  const badgeText = isConfirmed ? 'PAGAMENTO CONFIRMADO' : isRejected ? 'PAGAMENTO REJEITADO' : 'AGUARDANDO PAGAMENTO';
+  let headerColor = '#f59e0b'; // default yellow
+  let headerText = '🟡 TENTATIVA DE COMPRA';
+  let badgeColor = '#f59e0b';
+  let badgeText = 'AGUARDANDO PAGAMENTO';
+  
+  if (isConfirmed) {
+    headerColor = '#16a34a';
+    headerText = '✅ COMPRA CONFIRMADA';
+    badgeColor = '#16a34a';
+    badgeText = 'PAGAMENTO CONFIRMADO';
+  } else if (isRejected) {
+    headerColor = '#dc2626';
+    headerText = '❌ PAGAMENTO REJEITADO';
+    badgeColor = '#dc2626';
+    badgeText = 'PAGAMENTO REJEITADO';
+  } else if (isCancelled) {
+    headerColor = '#dc2626';
+    headerText = '🚫 PAGAMENTO CANCELADO';
+    badgeColor = '#dc2626';
+    badgeText = 'CANCELADO PELO CLIENTE';
+  } else if (isRefunded) {
+    headerColor = '#dc2626';
+    headerText = '💰 PAGAMENTO REEMBOLSADO';
+    badgeColor = '#dc2626';
+    badgeText = 'REEMBOLSO PROCESSADO';
+  } else if (isChargeback) {
+    headerColor = '#dc2626';
+    headerText = '⚠️ PAGAMENTO CONTESTADO';
+    badgeColor = '#dc2626';
+    badgeText = 'CHARGEBACK RECEBIDO';
+  }
   
   return `
     <!DOCTYPE html>

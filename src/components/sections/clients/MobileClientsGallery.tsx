@@ -25,7 +25,7 @@ export default function MobileClientsGallery({ colors }: MobileClientsGalleryPro
         {/* Фото 2 - новое изображение */}
         <figure className="aspect-square overflow-hidden rounded-2xl group">
           <img
-            src="/images/clients/0_3 (1).jpeg"
+            src="/images/clients/0_3_1.jpeg"
             alt="Cliente feliz com resultado"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             style={{filter: 'brightness(1.1) contrast(1.05)'}}
@@ -35,7 +35,7 @@ export default function MobileClientsGallery({ colors }: MobileClientsGalleryPro
         {/* Фото 3 - девушка на диване */}
         <figure className="aspect-square overflow-hidden rounded-2xl group">
           <img
-            src="/images/clients/0_0 (25).jpeg"
+            src="/images/clients/0_0_25.jpeg"
             alt="Cliente relaxando no sofá"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             style={{filter: 'brightness(1.1) contrast(1.05)'}}

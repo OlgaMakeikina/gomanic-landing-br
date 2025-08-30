@@ -4,6 +4,16 @@ import { bookingStorage } from '@/utils/storage';
 import { submitToN8N } from '@/utils/n8n';
 import { sendBookingEmail } from '@/utils/email';
 import { sendAdminNotification } from '@/utils/admin-email';
+import { paymentLogger } from '@/utils/paymentLogger';
+
+const getServicePrice = (service: string): number => {
+  const prices: Record<string, number> = {
+    'manicure-gel': 80,
+    'alongamento-gel': 119,
+    'combo-completo': 160
+  };
+  return prices[service] || 0;
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,8 +27,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('Processing booking for:', { name, email, service });
-
     // 1. Salvar dados localmente primeiro
     const bookingRecord = await bookingStorage.saveBooking({
       name,
@@ -27,7 +35,18 @@ export async function POST(request: NextRequest) {
       service
     });
 
-    console.log('Booking saved with orderId:', bookingRecord.orderId);
+    paymentLogger.logBusinessEvent({
+      orderId: bookingRecord.orderId,
+      event: 'booking_created',
+      customerEmail: email,
+      timestamp: new Date(),
+      details: { 
+        name, 
+        phone, 
+        service,
+        amount: getServicePrice(service)
+      }
+    });
 
     // 2. Criar preferência no MercadoPago
     const paymentResult = await createPaymentPreference(
@@ -80,14 +99,18 @@ export async function POST(request: NextRequest) {
         await bookingStorage.updateBooking(bookingRecord.orderId, {
           n8nSent: true
         });
-        console.log('✅ N8N webhook enviado');
       }
     } catch (n8nError) {
-      console.warn('❌ N8N sending failed:', n8nError);
+      paymentLogger.logPaymentError(bookingRecord.orderId, n8nError, 'n8n_webhook');
     }
 
-    // 5. НЕ отправляем email клиенту здесь - только после подтверждения оплаты
-    console.log('📧 Email клиенту будет отправлен после подтверждения оплаты через webhook');
+    paymentLogger.logBusinessEvent({
+      orderId: bookingRecord.orderId,
+      event: 'payment_pending',
+      customerEmail: email,
+      timestamp: new Date(),
+      details: { paymentUrl, preferenceId: paymentResult.preferenceId }
+    });
 
     // 6. Уведомить администраторов О ПОПЫТКЕ ПОКУПКИ
     try {
@@ -110,14 +133,18 @@ export async function POST(request: NextRequest) {
         service: serviceNames[service] || service,
         price: servicePrices[service] || 'N/A',
         timestamp: new Date().toISOString(),
-        status: 'TENTATIVA_COMPRA' // Novo campo para diferenciar
+        status: 'TENTATIVA_COMPRA'
       });
-      console.log('✅ Notificação admin enviada - TENTATIVA');
+      
+      paymentLogger.logBusinessEvent({
+        orderId: bookingRecord.orderId,
+        event: 'admin_notification_tentativa',
+        customerEmail: email,
+        timestamp: new Date()
+      });
     } catch (adminEmailError) {
-      console.warn('❌ Admin email failed:', adminEmailError);
+      paymentLogger.logPaymentError(bookingRecord.orderId, adminEmailError, 'admin_notification_tentativa');
     }
-
-    console.log('Booking processed successfully, redirecting to:', paymentResult.initPoint);
 
     return NextResponse.json({
       success: true,
@@ -130,7 +157,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('API booking error:', error);
+    paymentLogger.logPaymentError('booking', error, 'booking_creation');
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

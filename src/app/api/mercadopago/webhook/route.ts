@@ -2,23 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { bookingStorage } from '@/utils/storage';
 import { sendBookingEmail } from '@/utils/email';
 import { sendAdminNotification } from '@/utils/admin-email';
+import { paymentLogger } from '@/utils/paymentLogger';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { type, data } = body;
 
-    console.log('MercadoPago webhook dados completos:', JSON.stringify(body, null, 2));
+    paymentLogger.logWebhookReceived(data?.id || 'unknown', type);
 
     if (type === 'payment') {
       const paymentId = data?.id;
       
       if (!paymentId) {
-        console.warn('Payment webhook without payment ID');
+        paymentLogger.logPaymentError('unknown', new Error('Payment webhook without payment ID'), { body });
         return NextResponse.json({ message: 'Payment ID missing' }, { status: 200 });
       }
-
-      console.log('Payment webhook for payment ID:', paymentId);
       
       // OBTER DADOS DO PAGAMENTO VIA API
       try {
@@ -37,49 +36,65 @@ export async function POST(request: NextRequest) {
         }
 
         const paymentData = await paymentResponse.json();
-        console.log('Dados do pagamento da API:', JSON.stringify(paymentData, null, 2));
+        
+        paymentLogger.logWebhookReceived(paymentId, paymentData.status, paymentData.external_reference);
 
         const external_reference = paymentData.external_reference;
         const payment_status = paymentData.status;
-        
-        console.log('External reference da API:', external_reference);
-        console.log('Payment status:', payment_status);
 
         if (!external_reference) {
-          console.warn('external_reference ausente nos dados do pagamento');
+          paymentLogger.logPaymentError(paymentId, new Error('External reference missing in payment data'));
           return NextResponse.json({ message: 'External reference missing' }, { status: 200 });
         }
 
         // BUSCAR BOOKING
-        console.log('Buscando booking por external_reference:', external_reference);
         const booking = await bookingStorage.getBookingByExternalReference(external_reference);
         
-        if (booking) {
-          console.log('Booking ENCONTRADO:', {
-            orderId: booking.orderId,
-            email: booking.email,
-            name: booking.name,
-            service: booking.service
-          });
-        } else {
-          console.error('Booking NAO ENCONTRADO para external_reference:', external_reference);
+        if (!booking) {
+          paymentLogger.logPaymentError(external_reference, new Error('Booking not found'), { paymentId });
         }
 
         // PROCESSAR DIFERENTES STATUS
         if (payment_status === 'approved') {
           if (!booking) {
-            console.warn('Booking nao encontrado para pagamento aprovado');
+            paymentLogger.logPaymentError(external_reference, new Error('Booking not found for approved payment'));
             return NextResponse.json({ message: 'Booking not found for approved payment' }, { status: 200 });
           }
           
-          console.log('Pagamento APROVADO, processando...');
+          paymentLogger.logBusinessEvent({
+            orderId: booking.orderId,
+            event: 'payment_approved',
+            customerEmail: booking.email,
+            timestamp: new Date(),
+            details: { paymentId, amount: paymentData.transaction_amount }
+          });
+
+          paymentLogger.logPaymentDetails({
+            orderId: booking.orderId,
+            email: booking.email,
+            service: booking.service,
+            amount: paymentData.transaction_amount,
+            status: 'approved',
+            paymentId,
+            method: paymentData.payment_method_id,
+            customerName: booking.name
+          }, paymentData);
 
           // Enviar EMAIL para o CLIENTE
           try {
+            paymentLogger.logEmailEvent(booking.orderId, booking.email, 'sending');
             await sendBookingEmail(booking.email, booking.name, booking.service, booking.orderId);
-            console.log('Email enviado para o cliente apos confirmacao do pagamento');
+            
+            paymentLogger.logEmailEvent(booking.orderId, booking.email, 'success');
+            paymentLogger.logBusinessEvent({
+              orderId: booking.orderId,
+              event: 'email_sent',
+              customerEmail: booking.email,
+              timestamp: new Date()
+            });
           } catch (emailError) {
-            console.error('Erro ao enviar email para o cliente:', emailError);
+            paymentLogger.logEmailEvent(booking.orderId, booking.email, 'failed', emailError);
+            paymentLogger.logPaymentError(booking.orderId, emailError, 'customer_email');
           }
 
           // Enviar SEGUNDA notificacao para o ADMIN
@@ -107,7 +122,12 @@ export async function POST(request: NextRequest) {
               status: 'COMPRA_CONFIRMADA'
             });
             
-            console.log('Segunda notificacao admin enviada - COMPRA CONFIRMADA');
+            paymentLogger.logBusinessEvent({
+              orderId: booking.orderId,
+              event: 'admin_notification_confirmado',
+              customerEmail: booking.email,
+              timestamp: new Date()
+            });
             
           } catch (adminEmailError) {
             console.error('Erro ao enviar segunda notificacao admin:', adminEmailError);
@@ -120,7 +140,18 @@ export async function POST(request: NextRequest) {
           });
 
         } else if (payment_status === 'rejected') {
-          console.log('Pagamento REJEITADO, atualizando status');
+          paymentLogger.logBusinessEvent({
+            orderId: external_reference,
+            event: 'payment_failed',
+            customerEmail: booking?.email || 'unknown',
+            timestamp: new Date(),
+            details: { paymentId, reason: paymentData.status_detail }
+          });
+
+          paymentLogger.logPaymentError(external_reference, new Error(`Payment rejected: ${paymentData.status_detail}`), { 
+            paymentId, 
+            customerEmail: booking?.email 
+          });
           
           if (external_reference) {
             await bookingStorage.updateBooking(external_reference, {
@@ -142,15 +173,20 @@ export async function POST(request: NextRequest) {
               timestamp: new Date().toISOString(),
               status: 'PAGAMENTO_REJEITADO'
             });
-            console.log('Notificacao admin enviada - PAGAMENTO REJEITADO');
           } catch (error) {
-            console.error('Erro ao enviar notificacao de rejeicao:', error);
+            paymentLogger.logPaymentError(external_reference, error, 'admin_rejection_email');
           }
           
           return NextResponse.json({ message: 'Payment rejected processed' }, { status: 200 });
 
         } else if (payment_status === 'cancelled') {
-          console.log('Pagamento CANCELADO, atualizando status');
+          paymentLogger.logBusinessEvent({
+            orderId: external_reference,
+            event: 'payment_failed',
+            customerEmail: booking?.email || 'unknown',
+            timestamp: new Date(),
+            details: { paymentId, status: 'cancelled' }
+          });
           
           if (external_reference) {
             await bookingStorage.updateBooking(external_reference, {
@@ -158,16 +194,169 @@ export async function POST(request: NextRequest) {
               mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
             });
           }
+
+          // Обязательно уведомить админа об отмене
+          try {
+            await sendAdminNotification({
+              orderId: external_reference || 'N/A',
+              customerName: booking?.name || 'N/A',
+              customerEmail: booking?.email || 'N/A', 
+              customerPhone: booking?.phone || 'N/A',
+              service: booking?.service || 'Unknown',
+              price: 'N/A',
+              paymentId: paymentId,
+              timestamp: new Date().toISOString(),
+              status: 'PAGAMENTO_CANCELADO'
+            });
+
+            paymentLogger.logBusinessEvent({
+              orderId: external_reference,
+              event: 'admin_notification_cancelado',
+              customerEmail: booking?.email || 'unknown',
+              timestamp: new Date()
+            });
+          } catch (error) {
+            paymentLogger.logPaymentError(external_reference, error, 'admin_cancel_email');
+          }
           
           return NextResponse.json({ message: 'Payment cancelled processed' }, { status: 200 });
 
+        } else if (payment_status === 'pending') {
+          paymentLogger.logBusinessEvent({
+            orderId: external_reference,
+            event: 'payment_pending',
+            customerEmail: booking?.email || 'unknown',
+            timestamp: new Date(),
+            details: { paymentId, reason: paymentData.status_detail }
+          });
+          
+          if (external_reference) {
+            await bookingStorage.updateBooking(external_reference, {
+              paymentStatus: 'pending',
+              mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
+            });
+          }
+          
+          return NextResponse.json({ message: 'Payment pending processed' }, { status: 200 });
+
+        } else if (payment_status === 'in_process') {
+          paymentLogger.logBusinessEvent({
+            orderId: external_reference,
+            event: 'payment_pending',
+            customerEmail: booking?.email || 'unknown',
+            timestamp: new Date(),
+            details: { paymentId, status: 'in_process', reason: paymentData.status_detail }
+          });
+          
+          if (external_reference) {
+            await bookingStorage.updateBooking(external_reference, {
+              paymentStatus: 'in_process',
+              mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
+            });
+          }
+          
+          return NextResponse.json({ message: 'Payment in process' }, { status: 200 });
+
+        } else if (payment_status === 'authorized') {
+          paymentLogger.logBusinessEvent({
+            orderId: external_reference,
+            event: 'payment_pending',
+            customerEmail: booking?.email || 'unknown',
+            timestamp: new Date(),
+            details: { paymentId, status: 'authorized' }
+          });
+          
+          if (external_reference) {
+            await bookingStorage.updateBooking(external_reference, {
+              paymentStatus: 'authorized',
+              mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
+            });
+          }
+          
+          return NextResponse.json({ message: 'Payment authorized' }, { status: 200 });
+
+        } else if (payment_status === 'refunded') {
+          paymentLogger.logBusinessEvent({
+            orderId: external_reference,
+            event: 'payment_failed',
+            customerEmail: booking?.email || 'unknown',
+            timestamp: new Date(),
+            details: { paymentId, status: 'refunded', amount: paymentData.transaction_amount_refunded }
+          });
+          
+          if (external_reference) {
+            await bookingStorage.updateBooking(external_reference, {
+              paymentStatus: 'refunded',
+              mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
+            });
+          }
+
+          // Notificar admin sobre reembolso
+          try {
+            await sendAdminNotification({
+              orderId: external_reference || 'N/A',
+              customerName: booking?.name || 'N/A',
+              customerEmail: booking?.email || 'N/A', 
+              customerPhone: booking?.phone || 'N/A',
+              service: booking?.service || 'Unknown',
+              price: 'N/A',
+              paymentId: paymentId,
+              timestamp: new Date().toISOString(),
+              status: 'PAGAMENTO_REEMBOLSADO'
+            });
+          } catch (error) {
+            paymentLogger.logPaymentError(external_reference, error, 'admin_refund_email');
+          }
+          
+          return NextResponse.json({ message: 'Payment refunded processed' }, { status: 200 });
+
+        } else if (payment_status === 'charged_back') {
+          paymentLogger.logBusinessEvent({
+            orderId: external_reference,
+            event: 'payment_failed',
+            customerEmail: booking?.email || 'unknown',
+            timestamp: new Date(),
+            details: { paymentId, status: 'charged_back' }
+          });
+          
+          if (external_reference) {
+            await bookingStorage.updateBooking(external_reference, {
+              paymentStatus: 'charged_back',
+              mercadoPagoData: { paymentId, status: payment_status, processedAt: new Date().toISOString() }
+            });
+          }
+
+          // Notificar admin sobre chargeback
+          try {
+            await sendAdminNotification({
+              orderId: external_reference || 'N/A',
+              customerName: booking?.name || 'N/A',
+              customerEmail: booking?.email || 'N/A', 
+              customerPhone: booking?.phone || 'N/A',
+              service: booking?.service || 'Unknown',
+              price: 'N/A',
+              paymentId: paymentId,
+              timestamp: new Date().toISOString(),
+              status: 'PAGAMENTO_CONTESTADO'
+            });
+          } catch (error) {
+            paymentLogger.logPaymentError(external_reference, error, 'admin_chargeback_email');
+          }
+          
+          return NextResponse.json({ message: 'Payment chargeback processed' }, { status: 200 });
+
         } else {
-          console.log(`Pagamento em status: ${payment_status}, aguardando`);
+          paymentLogger.logPaymentError(external_reference, new Error(`Unknown payment status: ${payment_status}`), {
+            paymentId,
+            statusDetail: paymentData.status_detail,
+            customerEmail: booking?.email
+          });
+          
           return NextResponse.json({ message: `Payment status ${payment_status} noted` }, { status: 200 });
         }
 
       } catch (apiError) {
-        console.error('Erro ao obter dados do pagamento:', apiError);
+        paymentLogger.logPaymentError(paymentId, apiError, 'mercadopago_api_request');
         return NextResponse.json({ message: 'Payment API request failed' }, { status: 200 });
       }
     }
@@ -175,7 +364,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Webhook processed successfully' }, { status: 200 });
 
   } catch (error) {
-    console.error('MercadoPago webhook error:', error);
+    paymentLogger.logPaymentError('webhook', error, 'webhook_processing');
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }

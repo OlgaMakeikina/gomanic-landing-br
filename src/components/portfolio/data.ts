@@ -16,13 +16,13 @@ export const GLASS: GlassStyles = {
 }
 
 export const galleryImages = [
-  "0_0 (2).jpeg",
-  "0_0 (4) (1).jpeg",
-  "0_1 (13).jpeg",
-  "0_2 (3) (1).jpeg",
-  "0_2 (4).jpeg",
-  "0_2 (6) (1).jpeg",
-  "0_3 (23).jpeg",
-  "0_3 (24).jpeg",
-  "0_3 (25) (1).jpeg"
+  "0_0_2.jpeg",
+  "0_0_4_1.jpeg",
+  "0_1_13.jpeg",
+  "0_2_3_1.jpeg",
+  "0_2_4.jpeg",
+  "0_2_6_1.jpeg",
+  "0_3_23.jpeg",
+  "0_3_24.jpeg",
+  "0_3_25_1.jpeg"
 ]

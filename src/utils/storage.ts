@@ -11,7 +11,7 @@ export interface BookingRecord {
   service: string;
   preferenceId?: string;
   mercadoPagoUrl?: string;
-  paymentStatus: 'pending' | 'approved' | 'rejected' | 'cancelled';
+  paymentStatus?: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'in_process' | 'authorized' | 'refunded' | 'charged_back';
   createdAt: string;
   updatedAt: string;
   n8nSent: boolean;
@@ -123,6 +123,28 @@ class BookingStorage {
     } catch (error) {
       console.error('Error updating booking:', error);
       return null;
+    }
+  }
+
+  async getPendingBookings(olderThanMinutes: number = 60): Promise<BookingRecord[]> {
+    await this.ensureDataDir();
+    
+    try {
+      const allBookings = await this.getAllBookings();
+      const cutoffTime = new Date(Date.now() - olderThanMinutes * 60 * 1000);
+      
+      return allBookings.filter(booking => {
+        const createdAt = new Date(booking.createdAt);
+        const isPending = !booking.paymentStatus || 
+                         booking.paymentStatus === 'pending' || 
+                         booking.paymentStatus === 'in_process';
+        const isOld = createdAt < cutoffTime;
+        
+        return isPending && isOld;
+      });
+    } catch (error) {
+      console.error('Error getting pending bookings:', error);
+      return [];
     }
   }
 

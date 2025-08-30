@@ -44,8 +44,8 @@ next-env.d.ts
 # logs
 *.log
 logs/
+logs/*
 
+# production data
 data/
 *.backup
-ecosystem.config.js
-deploy.sh

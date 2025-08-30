@@ -6,12 +6,12 @@ export default function BeforeAfterSection() {
   const transformations = [
     {
       titulo: "Transformação Natural",
-      imagem: "/images/before-after/0_1 (12).jpeg",
+      imagem: "/images/before-after/0_1_12.jpeg",
       descricao: "Manicure perfeita com acabamento profissional"
     },
     {
       titulo: "Design Sofisticado", 
-      imagem: "/images/before-after/0_2 (1) (1).jpeg",
+      imagem: "/images/before-after/0_2_1_1.jpeg",
       descricao: "Nail art exclusiva e refinada"
     },
     {
