@@ -28,6 +28,6 @@ export const processSteps: ProcessStep[] = [
     "titulo": "Compareça no horário marcado ",
     "descricao": "Compareça e aproveite o serviço",
     "seguranca": "Aproveite o serviço VIP com 50% de vantagem",
-    "imagem": "/images/process/0_0_7.jpeg"
+    "imagem": "/images/process/0_0_7_1.jpeg"
   }
 ]
