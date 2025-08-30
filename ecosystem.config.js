@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'gomanic-landing-br',
-      script: 'node',
-      args: '.next/standalone/server.js',
+      script: 'node_modules/.bin/next',
+      args: 'start -p 3000',
       cwd: '/home/zardes/gomanic-landing-br',
       instances: 1,
       autorestart: true,
