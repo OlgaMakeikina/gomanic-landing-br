@@ -49,3 +49,14 @@ logs/*
 # production data
 data/
 *.backup
+
+# deploy configs
+deploy_key*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+ecosystem.config.js
+pm2.config.js
+.ssh/
+ssh-keys/
