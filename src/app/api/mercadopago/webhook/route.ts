@@ -7,17 +7,29 @@ import { paymentLogger } from '@/utils/paymentLogger';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { type, data } = body;
+    
+    // MercadoPago может отправлять данные в разных форматах
+    let eventType = body.type || body.topic || 'unknown';
+    let eventData = body.data || body;
+    
+    // Обработка разных форматов webhook
+    if (eventType === 'topic_merchant_order_wh' || eventType === 'merchant_order') {
+      eventType = 'merchant_order';
+    }
+    if (eventType === 'topic_payment_wh' || eventType === 'payment') {
+      eventType = 'payment';
+    }
 
-    paymentLogger.logWebhookReceived(data?.id || 'unknown', type);
+    console.log('Webhook received:', { eventType, eventData });
+    paymentLogger.logWebhookReceived(eventData?.id || 'unknown', eventType);
 
-    if (type === 'payment' || type === 'merchant_order') {
-      let paymentId = data?.id;
+    if (eventType === 'payment' || eventType === 'merchant_order') {
+      let paymentId = eventData?.id;
       
       // Para merchant_order, precisamos obter o payment ID do merchant order
-      if (type === 'merchant_order') {
+      if (eventType === 'merchant_order') {
         try {
-          const merchantOrderResponse = await fetch(`https://api.mercadopago.com/merchant_orders/${data?.id}`, {
+          const merchantOrderResponse = await fetch(`https://api.mercadopago.com/merchant_orders/${eventData?.id}`, {
             headers: {
               'Authorization': `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
               'Content-Type': 'application/json'
