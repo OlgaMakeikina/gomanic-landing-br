@@ -11,8 +11,28 @@ export async function POST(request: NextRequest) {
 
     paymentLogger.logWebhookReceived(data?.id || 'unknown', type);
 
-    if (type === 'payment') {
-      const paymentId = data?.id;
+    if (type === 'payment' || type === 'merchant_order') {
+      let paymentId = data?.id;
+      
+      // Para merchant_order, precisamos obter o payment ID do merchant order
+      if (type === 'merchant_order') {
+        try {
+          const merchantOrderResponse = await fetch(`https://api.mercadopago.com/merchant_orders/${data?.id}`, {
+            headers: {
+              'Authorization': `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (merchantOrderResponse.ok) {
+            const merchantOrderData = await merchantOrderResponse.json();
+            paymentId = merchantOrderData.payments?.[0]?.id;
+            console.log('Payment ID obtido do merchant order:', paymentId);
+          }
+        } catch (error) {
+          console.error('Erro ao obter merchant order:', error);
+        }
+      }
       
       if (!paymentId) {
         paymentLogger.logPaymentError('unknown', new Error('Payment webhook without payment ID'), { body });
