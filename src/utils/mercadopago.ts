@@ -96,7 +96,7 @@ export async function createPaymentPreference(bookingData: BookingData, orderId:
         }
       },
       external_reference: orderId,
-      back_url: {
+      back_urls: {
         success: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/sucesso?order=${orderId}`,
         failure: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/erro?order=${orderId}`,
         pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/pendente?order=${orderId}`
