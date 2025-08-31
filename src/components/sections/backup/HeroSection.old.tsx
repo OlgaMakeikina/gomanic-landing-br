@@ -23,7 +23,7 @@ const heroSlides = [
   },
   {
     id: 3,
-    image: '/images/hero/0_0 (6) (1).jpeg',
+    image: '/images/hero/0_0_6_1.jpeg',
     title: 'PASSE VIP',
     subtitle: 'Vantagens exclusivas para membros VIP',
     benefits: [

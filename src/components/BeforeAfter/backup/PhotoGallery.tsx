@@ -5,7 +5,7 @@ import Image from 'next/image';
 import styles from './PhotoGallery.module.css';
 
 const photoData = [
-  '/images/before-after/0_0 (16).jpeg',
+  '/images/before-after/0_0_16.jpeg',
   '/images/before-after/0_3 (22).jpeg',
   '/images/before-after/0_1 (14).jpeg'
 ];

@@ -99,7 +99,7 @@ export default function Footer() {
             <div className="space-y-6 flex-grow">
               <div className="flex justify-center">
                 <div className="flex items-start gap-2">
-                  <img src="/images/contacts/icons8-location-100 (1).png" alt="Location" className="w-5 h-5 mt-1 flex-shrink-0" style={{filter: 'brightness(0) invert(1)'}} />
+                  <img src="/images/contacts/icons8-location-100.png" alt="Location" className="w-5 h-5 mt-1 flex-shrink-0" style={{filter: 'brightness(0) invert(1)'}} />
                   <div className="text-sm leading-relaxed">
                     <a href="https://maps.app.goo.gl/WAF49srxPQj4tdeV9" target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{color: '#FEFEFE', textDecoration: 'none'}}>
                       <div>Sala 1, Rod. Armando Calil Bulos, 5795</div>

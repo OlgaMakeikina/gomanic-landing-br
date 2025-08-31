@@ -76,9 +76,15 @@ class BookingStorage {
 
   async getBooking(orderId: string): Promise<BookingRecord | null> {
     try {
-      const data = await fs.readFile(this.getFilePath(orderId), 'utf-8');
+      const filePath = this.getFilePath(orderId);
+      await fs.access(filePath);
+      const data = await fs.readFile(filePath, 'utf-8');
       return JSON.parse(data) as BookingRecord;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        console.warn(`Booking file not found: ${orderId}`);
+        return null;
+      }
       console.error('Error reading booking:', orderId, error);
       return null;
     }

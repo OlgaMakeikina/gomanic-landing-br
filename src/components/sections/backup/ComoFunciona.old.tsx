@@ -16,7 +16,7 @@ export default function ComoFunciona() {
       descricao: "PIX ou cartão - segurança total",
       detalhes: "Pagamento criptografado com as maiores empresas do Brasil",
       seguranca: "Pagamento da entrada é 100% seguro. Se não puder comparecer, reagendamos ou devolvemos o valor",
-      imagem: "/images/process/0_0 (8) (1).jpeg"
+      imagem: "/images/process/0_0_8_1.jpeg"
     },
     {
       numero: "3",
@@ -32,7 +32,7 @@ export default function ComoFunciona() {
       descricao: "Relaxe e complete o pagamento",
       detalhes: "Aproveite seu tratamento VIP e pague o restante no local com desconto",
       seguranca: "Garantia de satisfação 100%",
-      imagem: "/images/process/0_0 (7).jpeg"
+      imagem: "/images/process/0_0_7.jpeg"
     }
   ]
 
