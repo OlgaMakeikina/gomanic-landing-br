@@ -101,6 +101,8 @@ export async function createPaymentPreference(bookingData: BookingData, orderId:
         failure: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/erro?order=${orderId}`,
         pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pagamento/pendente?order=${orderId}`
       },
+      auto_return: "approved",
+      binary_mode: true,
       payment_methods: {
         excluded_payment_methods: [],
         excluded_payment_types: [],
