@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { trackFormSubmission } from '@/utils/analytics';
+import { trackInitiateCheckout, trackLead } from '@/utils/facebook-pixel';
 import { 
   validateLatinAmericanPhone, 
   validateBrazilianName, 
@@ -9,6 +10,16 @@ import {
   formatLatinAmericanPhone
 } from '@/utils/validation';
 import { openWhatsAppChat } from '@/utils/whatsapp';
+
+// Service prices for Meta Pixel tracking
+const getServicePrice = (service: string): number => {
+  const prices: Record<string, number> = {
+    'manicure-gel': 80,
+    'alongamento-gel': 119,
+    'combo-completo': 160
+  };
+  return prices[service] || 0;
+};
 
 interface BookingFormProps {
   className?: string;
@@ -143,6 +154,15 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
       const result = await response.json();
       
       if (result.success) {
+        // Meta Pixel: Track lead generation
+        trackLead('Booking Form');
+        
+        // Meta Pixel: Track checkout initiation if payment URL exists
+        if (result.data.paymentUrl) {
+          const servicePrice = getServicePrice(formData.service);
+          trackInitiateCheckout(result.data.orderId, servicePrice);
+        }
+        
         // Redirect to MercadoPago
         if (result.data.paymentUrl) {
           window.location.href = result.data.paymentUrl;

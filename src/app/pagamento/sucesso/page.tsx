@@ -2,6 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { trackPurchase, trackCompleteRegistration } from '@/utils/facebook-pixel';
 
 export default function PaymentSuccess() {
   const searchParams = useSearchParams();
@@ -28,6 +29,14 @@ export default function PaymentSuccess() {
               'combo-completo': { name: 'Combo Completo', price: 'R$ 160' }
             };
             setServiceInfo(services[data.service as keyof typeof services] || null);
+            
+            // Meta Pixel: Track successful purchase
+            const service = services[data.service as keyof typeof services];
+            if (service) {
+              const servicePrice = parseInt(service.price.replace(/\D/g, ''));
+              trackPurchase(orderId, servicePrice, 'BRL');
+              trackCompleteRegistration('booking');
+            }
           }
         })
         .catch(err => console.warn('Erro ao carregar dados:', err));
