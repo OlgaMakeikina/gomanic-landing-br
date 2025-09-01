@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import Header from '@/components/header/Header'
 import HeroSection from '@/components/hero/HeroSection'
 import PromocoesMes2 from '@/components/sections/PromocoesMes2'
@@ -11,8 +12,15 @@ import ComoFunciona from '@/components/como-funciona'
 import VipExclusivo from '@/components/sections/VipExclusivo'
 import ContactSection from '@/components/contact'
 import Footer from '@/components/footer'
+import { checkPixelStatus } from '@/utils/facebook-pixel'
 
 export default function Home() {
+  useEffect(() => {
+    // Debug Meta Pixel on test domain
+    if (typeof window !== 'undefined' && window.location.hostname.includes('test.')) {
+      setTimeout(() => checkPixelStatus(), 2000);
+    }
+  }, []);
   return (
     <div className="min-h-screen" style={{backgroundColor: '#FEFEFE'}}>
       <Header />

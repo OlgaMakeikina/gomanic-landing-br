@@ -49,8 +49,22 @@ export const trackLead = (content_name?: string) => {
   });
 };
 
-export const trackCompleteRegistration = (method: string = 'email') => {
+export const trackCompleteRegistration = (method: string = 'booking') => {
   trackEvent('CompleteRegistration', {
-    registration_method: method
+    content_name: method
   });
+};
+
+export const checkPixelStatus = () => {
+  if (typeof window !== 'undefined') {
+    console.log('Meta Pixel Status:');
+    console.log('- fbq function exists:', typeof window.fbq === 'function');
+    console.log('- Pixel ID in env:', process.env.FACEBOOK_PIXEL_ID ? 'Set' : 'Not set');
+    
+    // Test pixel call
+    if (window.fbq) {
+      window.fbq('track', 'PageView');
+      console.log('- Test PageView event sent');
+    }
+  }
 };
