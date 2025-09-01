@@ -14,7 +14,7 @@ export const processSteps: ProcessStep[] = [
     "titulo": "Pague pelo serviço",
     "descricao": "PIX ou cartão – total segurança",
     "seguranca": "A entrada é 100% segura. Se você não puder comparecer, reagendamos ou devolvemos o valor",
-    "imagem": "/images/process/0_0_8_1.jpeg"
+    "imagem": "/images/process/0_0_8_2.jpeg"
   },
   {
     "numero": "3", 

@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { ProcessStepCardProps } from './types'
 
 export default function DesktopStepCard({ passo, index }: ProcessStepCardProps) {
@@ -30,7 +31,14 @@ export default function DesktopStepCard({ passo, index }: ProcessStepCardProps) 
             <div className="relative z-10">
             <div className="mb-6 rounded-xl overflow-hidden"
                  style={{boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)'}}>
-              <img src={passo.imagem} alt={passo.titulo} className="w-full h-48 object-cover" />
+              <Image 
+                src={passo.imagem} 
+                alt={passo.titulo} 
+                width={400}
+                height={192}
+                className="w-full h-48 object-cover" 
+                priority={index === 0}
+              />
             </div>
             <h3 className="vogue-caption mb-4" style={{color: '#FEFEFE'}}>{passo.titulo}</h3>
             <p className="vogue-body text-lg mb-4" style={{color: '#FEFEFE', fontWeight: 600}}>{passo.descricao}</p>

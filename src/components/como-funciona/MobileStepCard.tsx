@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { ProcessStepCardProps } from './types'
 
 export default function MobileStepCard({ passo, index }: ProcessStepCardProps) {
@@ -29,7 +30,14 @@ export default function MobileStepCard({ passo, index }: ProcessStepCardProps) {
           <div className="md:flex md:items-start md:gap-6">
             <div className="mb-4 md:mb-0 rounded-xl overflow-hidden md:w-40 md:h-40 md:flex-shrink-0"
                  style={{boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)'}}>
-              <img src={passo.imagem} alt={passo.titulo} className="w-full h-full object-cover" />
+              <Image 
+                src={passo.imagem} 
+                alt={passo.titulo} 
+                width={160}
+                height={160}
+                className="w-full h-full object-cover" 
+                priority={index === 0}
+              />
             </div>
             <div className="md:flex-1">
               <h3 className="vogue-caption mb-3" style={{color: '#FEFEFE'}}>{passo.titulo}</h3>

@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 interface SlideBackgroundProps {
   slides: Array<{ id: number; image: string }>
   currentSlide: number
@@ -16,7 +18,14 @@ export default function SlideBackground({ slides, currentSlide }: SlideBackgroun
           {slide.image.startsWith('#') ? (
             <div className="w-full h-full" style={{ backgroundColor: slide.image }}></div>
           ) : (
-            <img src={slide.image} alt={`Slide ${slide.id}`} className="w-full h-full object-cover" />
+            <Image
+              src={slide.image}
+              alt={`Slide ${slide.id}`}
+              fill
+              className="object-cover"
+              priority={index === currentSlide}
+              sizes="100vw"
+            />
           )}
         </div>
       ))}
