@@ -76,6 +76,16 @@ export default function RootLayout({
           type="font/otf" 
           crossOrigin="anonymous"
         />
+        
+        <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#444f55" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Gomanic" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
