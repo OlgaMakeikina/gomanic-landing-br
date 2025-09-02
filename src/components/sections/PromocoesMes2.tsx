@@ -31,7 +31,7 @@ export default function PromocoesMes2() {
         ],
       },
       {
-        titulo: "COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS",
+        titulo: "COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE EM GEL + PLÁSTICA DOS PÉS",
         precoNormal: "R$ 320",
         precoVIP: "R$ 160", 
         pagamentoAntecipado: "R$ 160",

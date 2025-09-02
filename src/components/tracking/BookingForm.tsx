@@ -103,7 +103,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
     },
     {
       id: 'combo-completo',
-      name: 'COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS',
+      name: 'COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE EM GEL + PLÁSTICA DOS PÉS',
       price: 'R$ 160'
     }
   ];

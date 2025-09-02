@@ -17,7 +17,7 @@ export const heroSlides: HeroSlide[] = [
     services: [
       { name: 'Manicure + nivelamento + esmaltação em gel', oldPrice: 160, newPrice: 80 },
       { name: 'Alongamento + manicure + esmaltação em gel', oldPrice: 200, newPrice: 119 },
-      { name: 'Combo: manicure + esmaltação em gel + pedicure + plástica dos pés', oldPrice: 320, newPrice: 160 }
+      { name: 'Combo: manicure + esmaltação em gel + pedicure em gel + plástica dos pés', oldPrice: 320, newPrice: 160 }
     ]
   },
 
