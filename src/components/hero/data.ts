@@ -29,7 +29,7 @@ export const heroSlides: HeroSlide[] = [
     benefits: [
       'Somente 30 clientes por mês podem ter Passe VIP',
       'O preço nunca mais se repete depois que as vagas esgotarem',
-      'VIPs recebem um brinde surpresa na primeira visita'
+      'VIPs recebem um brinde surpresa na primeira visita - express SPA para mãos'
     ]
   }
 ]

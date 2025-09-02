@@ -138,7 +138,7 @@ export default function VipExclusivo() {
     },
     {
       title: 'BRINDE SURPRESA',
-      description: 'VIPs recebem um brinde surpresa na primeira visita.',
+      description: 'Serviço brinde express SPA para mãos.',
       delay: 600
     }
   ]
