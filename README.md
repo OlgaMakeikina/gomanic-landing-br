@@ -1,6 +1,11 @@
-# 🚀 GOMANIC BRASIL - PRODUCTION READY
+# 🚀 GOMANIC BRASIL - PRODUCTION READY v2.3
 
-## ✅ STATUS: ГОТОВ К VPS ДЕПЛОЮ
+## ✅ STATUS: ГОТОВ К VPS ДЕПЛОЮ + ОБНОВЛЕННЫЕ ИКОНКИ
+
+### 🆕 ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ (3 сентября 2025):
+- **Иконки обновлены**: Все favicon файлы заменены на новый брендинг
+- **PWA готовность**: Android Chrome + iOS Safari иконки
+- **SEO оптимизация**: Все browser tabs будут отображать новые иконки
 
 ### 🎯 СИСТЕМА:
 - **Next.js 14** + TypeScript + Tailwind
@@ -9,6 +14,16 @@
 - **JSON storage** + N8N webhook
 - **Email**: vip@gomanic.com.br
 - **WhatsApp**: +55 48 99917-0099
+
+### 🎨 ОБНОВЛЕННЫЕ ASSETS:
+```
+public/icons/           [ВСЕ ОБНОВЛЕНЫ]
+├── favicon.ico         - Основной favicon
+├── favicon-16x16.png   - Малые tabs
+├── favicon-32x32.png   - Стандартные tabs
+├── android-chrome-*    - PWA иконки
+└── apple-touch-icon    - iOS Safari
+```
 
 ### 📱 ПОДДЕРЖКА СТРАН:
 🇧🇷🇦🇷🇲🇽🇨🇴🇨🇱🇵🇪🇻🇪🇪🇨🇧🇴🇵🇾🇺🇾🇨🇷🇵🇦

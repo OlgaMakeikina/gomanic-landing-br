@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [2.3.0] - 2025-09-03 - Icon Assets Update
+
+### 🎨 Favicon & App Icons Refresh
+- **6 Files Updated**: All favicon и app icon files replaced
+- **SEO Ready**: Optimized for all browser tabs и devices
+- **PWA Support**: Android Chrome 192x192 + 512x512 icons
+- **iOS Optimized**: Apple touch icon for Safari bookmarks
+- **Standard Compliance**: favicon.ico + PNG variants (16x16, 32x32)
+
+### 📂 Updated Assets
+```
+public/icons/
+├── android-chrome-192x192.png  [NEW BRANDING]
+├── android-chrome-512x512.png  [NEW BRANDING]
+├── apple-touch-icon.png        [NEW BRANDING]
+├── favicon-16x16.png           [NEW BRANDING]
+├── favicon-32x32.png           [NEW BRANDING]
+└── favicon.ico                 [NEW BRANDING]
+```
+
+### 🏗️ Architecture Integrity
+- **Zero Code Changes**: Только статичные assets обновлены
+- **Modular Structure**: Архитектура компонентов не затронута
+- **TypeScript Compliance**: Никаких изменений в .ts/.tsx файлах
+- **Production Ready**: Готово к деплою без дополнительной настройки
+
 ## [2.1.7] - 2025-08-23 - Service Selection Added to Booking Form
 
 ### 📋 Service Options Integration
