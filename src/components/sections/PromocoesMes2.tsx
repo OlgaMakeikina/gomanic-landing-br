@@ -237,7 +237,7 @@ export default function PromocoesMes2() {
                       </span>
                     </div>
                     
-                    {/* Предоплата */}
+                    {/* Предоплата 
                     
                     <div 
                       className="text-sm"
@@ -248,9 +248,9 @@ export default function PromocoesMes2() {
                         fontSize: 11
                       }}
                     >
-                      Pagamento antecipado: {promo.pagamentoAntecipado}
+                    Pagamento antecipado: {promo.pagamentoAntecipado}
                     </div>
-                  
+                  */}
                   </div>
                   
                   {/* Кнопка раскрытия */}
