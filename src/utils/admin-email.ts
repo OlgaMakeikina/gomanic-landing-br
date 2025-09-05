@@ -6,10 +6,10 @@ interface AdminNotificationData {
   customerEmail: string;
   customerPhone: string;
   service: string;
-  price: string;
+  price?: string;
   paymentId?: string;
   timestamp: string;
-  status?: 'TENTATIVA_COMPRA' | 'COMPRA_CONFIRMADA' | 'PAGAMENTO_REJEITADO' | 'PAGAMENTO_CANCELADO' | 'PAGAMENTO_REEMBOLSADO' | 'PAGAMENTO_CONTESTADO';
+  status?: 'TENTATIVA_COMPRA' | 'COMPRA_CONFIRMADA' | 'PAGAMENTO_REJEITADO' | 'PAGAMENTO_CANCELADO' | 'PAGAMENTO_REEMBOLSADO' | 'PAGAMENTO_CONTESTADO' | 'WHATSAPP_BOOKING';
 }
 
 const EMAIL_CONFIG = {
@@ -41,7 +41,9 @@ export const sendAdminNotification = async (data: AdminNotificationData): Promis
     const mailOptions = {
       from: `"Gomanic Brasil - Sistema" <${EMAIL_CONFIG.auth.user}>`,
       to: adminEmail,
-      subject: `🔔 Nova Compra: ${data.service} - ${data.customerName}`,
+      subject: data.status === 'WHATSAPP_BOOKING' 
+        ? `📱 Novo Agendamento WhatsApp: ${data.service} - ${data.customerName}`
+        : `🔔 Nova Compra: ${data.service} - ${data.customerName}`,
       html: emailHTML
     };
 
@@ -64,13 +66,19 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
   const isCancelled = data.status === 'PAGAMENTO_CANCELADO';
   const isRefunded = data.status === 'PAGAMENTO_REEMBOLSADO';
   const isChargeback = data.status === 'PAGAMENTO_CONTESTADO';
+  const isWhatsApp = data.status === 'WHATSAPP_BOOKING';
   
-  let headerColor = '#f59e0b'; // default yellow
+  let headerColor = '#f59e0b';
   let headerText = '🟡 TENTATIVA DE COMPRA';
   let badgeColor = '#f59e0b';
   let badgeText = 'AGUARDANDO PAGAMENTO';
   
-  if (isConfirmed) {
+  if (isWhatsApp) {
+    headerColor = '#16a34a';
+    headerText = '📱 AGENDAMENTO WHATSAPP';
+    badgeColor = '#16a34a';
+    badgeText = 'AGUARDANDO CONTATO';
+  } else if (isConfirmed) {
     headerColor = '#16a34a';
     headerText = '✅ COMPRA CONFIRMADA';
     badgeColor = '#16a34a';
@@ -185,7 +193,7 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
         <div class="content">
           <div class="alert-badge" style="background: ${badgeColor};">${badgeText}</div>
           
-          <p>${isConfirmed ? 'Pagamento confirmado com sucesso!' : isRejected ? 'Pagamento foi rejeitado ou cancelado.' : 'Nova tentativa de compra iniciada no site!'}</p>
+          <p>${isWhatsApp ? 'Cliente preencheu formulário e foi redirecionado para WhatsApp!' : isConfirmed ? 'Pagamento confirmado com sucesso!' : isRejected ? 'Pagamento foi rejeitado ou cancelado.' : 'Nova tentativa de compra iniciada no site!'}</p>
           
           <div class="customer-info">
             <h3 style="margin: 0 0 15px 0; color: #dc2626;">👤 Dados do Cliente</h3>
@@ -211,7 +219,7 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
             </div>
             <div class="data-row">
               <span class="data-label">Valor:</span>
-              <span class="data-value">${data.price}</span>
+              <span class="data-value">${data.price || 'A combinar'}</span>
             </div>
             <div class="data-row">
               <span class="data-label">Pedido:</span>
@@ -230,7 +238,9 @@ const generateAdminEmailHTML = (data: AdminNotificationData): string => {
           <div style="background: #eff6ff; border-radius: 8px; padding: 15px; margin: 15px 0;">
             <h3 style="color: #1d4ed8; margin-top: 0;">📱 Próximos Passos</h3>
             <p style="margin-bottom: 0;">
-              ${isConfirmed 
+              ${isWhatsApp
+                ? 'Cliente foi redirecionado para WhatsApp. Aguarde o contato para confirmação e agendamento!'
+                : isConfirmed 
                 ? 'O cliente receberá um email com link para WhatsApp. Aguarde o contato para agendamento!' 
                 : isRejected
                 ? 'Pagamento foi rejeitado. Cliente pode tentar novamente com outro método de pagamento.'

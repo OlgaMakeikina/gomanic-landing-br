@@ -129,7 +129,6 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
       return;
     }
 
-    // Валидация выбора услуги
     if (!formData.service) {
       setError('Por favor, escolha uma opção de serviço');
       setIsSubmitting(false);
@@ -148,33 +147,45 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
       const response = await fetch('/api/booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, type: 'booking' }),
+        body: JSON.stringify({ 
+          ...formData, 
+          type: 'whatsapp_booking',
+          skipPayment: true 
+        }),
       });
 
       const result = await response.json();
       
       if (result.success) {
-        // Meta Pixel: Track lead generation
-        trackLead('Booking Form');
+        trackLead('WhatsApp Booking');
         
-        // Meta Pixel: Track checkout initiation if payment URL exists
-        if (result.data.paymentUrl) {
-          const servicePrice = getServicePrice(formData.service);
-          trackInitiateCheckout(result.data.orderId, servicePrice);
-        }
+        const serviceNames: Record<string, string> = {
+          'manicure-gel': 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL (R$ 80)',
+          'alongamento-gel': 'ALONGAMENTO + MANICURE + ESMALTAÇÃO EM GEL (R$ 119)',
+          'combo-completo': 'COMBO: MANICURE + ESMALTAÇÃO EM GEL + PEDICURE + PLÁSTICA DOS PÉS (R$ 160)'
+        };
+
+        const whatsappMessage = encodeURIComponent(
+          `Olá! Gostaria de agendar:\n\n` +
+          `👤 Nome: ${formData.name}\n` +
+          `📱 Telefone: ${formData.phone}\n` +
+          `📧 Email: ${formData.email}\n` +
+          `💅 Serviço: ${serviceNames[formData.service]}\n\n` +
+          `Código do agendamento: ${result.data.orderId}`
+        );
         
-        // Redirect to MercadoPago
-        if (result.data.paymentUrl) {
-          window.location.href = result.data.paymentUrl;
-          return;
-        }
+        const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '5548991970099';
+        window.open(
+          `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`, 
+          '_blank'
+        );
         
         setIsSubmitted(true);
         
-        // Analytics
         if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'conversion', {
-            send_to: 'AW-XXXXXXXXX/XXXXXXXXXXXXX',
+          window.gtag('event', 'whatsapp_redirect', {
+            event_category: 'engagement',
+            event_label: formData.service
           });
         }
       } else {
@@ -209,7 +220,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
             textTransform: 'uppercase',
             fontWeight: 600
           }}>
-            ✅ REDIRECIONANDO PARA PAGAMENTO
+            ✅ REDIRECIONANDO PARA WHATSAPP
           </div>
           <p style={{
             color: '#FEFEFE',
@@ -218,7 +229,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
             opacity: 0.9,
             lineHeight: 1.6
           }}>
-            Aguarde, você está sendo redirecionado para o MercadoPago para finalizar seu agendamento.
+            Seus dados foram salvos! Você será redirecionado para o WhatsApp para finalizar o agendamento com nossa equipe.
           </p>
         </div>
       </div>
@@ -541,7 +552,7 @@ export default function BookingForm({ className = '', variant = 'default' }: Boo
                 padding: '12px 24px'
               }}
             >
-              {isSubmitting ? 'PROCESSANDO...' : 'CONTINUAR PARA PAGAMENTO'}
+              {isSubmitting ? 'PROCESSANDO...' : 'AGENDAR VIA WHATSAPP'}
             </button>
           </div>
         </form>

@@ -20,7 +20,7 @@ export interface PaymentLogData {
 
 export interface BusinessEvent {
   orderId: string;
-  event: 'booking_created' | 'payment_pending' | 'payment_approved' | 'payment_failed' | 'email_sent' | 'webhook_received' | 'admin_notification_tentativa' | 'admin_notification_confirmado' | 'admin_notification_cancelado';
+  event: 'booking_created' | 'payment_pending' | 'payment_approved' | 'payment_failed' | 'email_sent' | 'webhook_received' | 'admin_notification_tentativa' | 'admin_notification_confirmado' | 'admin_notification_cancelado' | 'whatsapp_booking_created' | 'admin_notification_whatsapp';
   customerEmail: string;
   timestamp: Date;
   details?: any;
@@ -52,6 +52,7 @@ class Logger {
     
     const eventMessages = {
       'booking_created': `BOOKING_CREATED: Order ${event.orderId} - ${event.details?.name || 'N/A'} - ${event.customerEmail} - ${event.details?.phone || 'N/A'} - ${event.details?.service || 'N/A'}`,
+      'whatsapp_booking_created': `WHATSAPP_BOOKING_CREATED: Order ${event.orderId} - ${event.details?.name || 'N/A'} - ${event.customerEmail} - ${event.details?.phone || 'N/A'} - ${event.details?.service || 'N/A'}`,
       'payment_pending': `PAYMENT_PENDING: Order ${event.orderId} - ${event.customerEmail}`,
       'payment_approved': `PAYMENT_APPROVED: Order ${event.orderId} - ${event.customerEmail} - Amount: R$${event.details?.amount || 'N/A'}`,
       'payment_failed': `PAYMENT_FAILED: Order ${event.orderId} - ${event.customerEmail} - Reason: ${event.details?.reason || 'N/A'}`,
@@ -59,7 +60,8 @@ class Logger {
       'webhook_received': `WEBHOOK_RECEIVED: ${event.details?.paymentId || 'N/A'} - Status: ${event.details?.status || 'N/A'}`,
       'admin_notification_tentativa': `ADMIN_NOTIFICATION_TENTATIVA: Order ${event.orderId} - ${event.customerEmail}`,
       'admin_notification_confirmado': `ADMIN_NOTIFICATION_CONFIRMADO: Order ${event.orderId} - ${event.customerEmail}`,
-      'admin_notification_cancelado': `ADMIN_NOTIFICATION_CANCELADO: Order ${event.orderId} - ${event.customerEmail}`
+      'admin_notification_cancelado': `ADMIN_NOTIFICATION_CANCELADO: Order ${event.orderId} - ${event.customerEmail}`,
+      'admin_notification_whatsapp': `ADMIN_NOTIFICATION_WHATSAPP: Order ${event.orderId} - ${event.customerEmail}`
     };
     
     console.log(eventMessages[event.event] || `${event.event.toUpperCase()}: Order ${event.orderId} - ${event.customerEmail}`);

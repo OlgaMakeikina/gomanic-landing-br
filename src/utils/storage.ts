@@ -9,9 +9,10 @@ export interface BookingRecord {
   phone: string;
   email: string;
   service: string;
+  type?: 'payment_booking' | 'whatsapp_booking';
   preferenceId?: string;
   mercadoPagoUrl?: string;
-  paymentStatus?: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'in_process' | 'authorized' | 'refunded' | 'charged_back';
+  paymentStatus?: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'in_process' | 'authorized' | 'refunded' | 'charged_back' | 'whatsapp_pending';
   createdAt: string;
   updatedAt: string;
   n8nSent: boolean;
@@ -42,6 +43,7 @@ class BookingStorage {
     phone: string;
     email: string;
     service: string;
+    type?: 'payment_booking' | 'whatsapp_booking';
   }): Promise<BookingRecord> {
     await this.ensureDataDir();
 
@@ -53,7 +55,8 @@ class BookingStorage {
       phone: bookingData.phone,
       email: bookingData.email,
       service: bookingData.service,
-      paymentStatus: 'pending',
+      type: bookingData.type || 'payment_booking',
+      paymentStatus: bookingData.type === 'whatsapp_booking' ? 'whatsapp_pending' : 'pending',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       n8nSent: false
@@ -66,7 +69,7 @@ class BookingStorage {
         'utf-8'
       );
       
-      console.log('Booking saved:', orderId);
+      console.log('Booking saved:', orderId, record.type);
       return record;
     } catch (error) {
       console.error('Error saving booking:', error);

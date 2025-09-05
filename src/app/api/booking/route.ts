@@ -18,7 +18,7 @@ const getServicePrice = (service: string): number => {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, phone, email, service } = body;
+    const { name, phone, email, service, type, skipPayment } = body;
 
     if (!name || !phone || !email || !service) {
       return NextResponse.json(
@@ -32,87 +32,116 @@ export async function POST(request: NextRequest) {
       name,
       phone,
       email,
-      service
+      service,
+      type: skipPayment ? 'whatsapp_booking' : 'payment_booking'
     });
 
+    // 2. Se NÃO pular pagamento - criar MercadoPago (comportamento original)
+    if (!skipPayment) {
+      paymentLogger.logBusinessEvent({
+        orderId: bookingRecord.orderId,
+        event: 'booking_created',
+        customerEmail: email,
+        timestamp: new Date(),
+        details: { 
+          name, 
+          phone, 
+          service,
+          amount: getServicePrice(service)
+        }
+      });
+
+      const paymentResult = await createPaymentPreference(
+        { name, phone, email, service },
+        bookingRecord.orderId
+      );
+
+      if (!paymentResult.success) {
+        console.error('❌ MercadoPago error:', paymentResult.error);
+        return NextResponse.json(
+          { error: paymentResult.error || 'Erro ao criar pagamento no MercadoPago' },
+          { status: 500 }
+        );
+      }
+
+      const paymentUrl = paymentResult.initPoint || paymentResult.sandboxInitPoint;
+      
+      if (!paymentUrl) {
+        console.error('❌ Nenhum link de pagamento retornado pelo MercadoPago');
+        return NextResponse.json(
+          { error: 'Link de pagamento não foi gerado' },
+          { status: 500 }
+        );
+      }
+
+      await bookingStorage.updateBooking(bookingRecord.orderId, {
+        preferenceId: paymentResult.preferenceId,
+        mercadoPagoUrl: paymentUrl
+      });
+
+      try {
+        const n8nResult = await submitToN8N({
+          orderId: bookingRecord.orderId,
+          name,
+          phone,
+          email,
+          service,
+          paymentStatus: 'pending',
+          preferenceId: paymentResult.preferenceId,
+          mercadoPagoUrl: paymentUrl,
+          createdAt: bookingRecord.createdAt
+        });
+
+        if (n8nResult.success) {
+          await bookingStorage.updateBooking(bookingRecord.orderId, {
+            n8nSent: true
+          });
+        }
+      } catch (n8nError) {
+        paymentLogger.logPaymentError(bookingRecord.orderId, n8nError, 'n8n_webhook');
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Booking criado com sucesso!',
+        data: {
+          orderId: bookingRecord.orderId,
+          paymentUrl: paymentUrl,
+          preferenceId: paymentResult.preferenceId
+        }
+      });
+    }
+
+    // 3. WhatsApp booking - sem pagamento
     paymentLogger.logBusinessEvent({
       orderId: bookingRecord.orderId,
-      event: 'booking_created',
+      event: 'whatsapp_booking_created',
       customerEmail: email,
       timestamp: new Date(),
-      details: { 
-        name, 
-        phone, 
-        service,
-        amount: getServicePrice(service)
-      }
+      details: { name, phone, service, type: 'whatsapp' }
     });
 
-    // 2. Criar preferência no MercadoPago
-    const paymentResult = await createPaymentPreference(
-      { name, phone, email, service },
-      bookingRecord.orderId
-    );
-
-    if (!paymentResult.success) {
-      console.error('❌ MercadoPago error:', paymentResult.error);
-      return NextResponse.json(
-        { error: paymentResult.error || 'Erro ao criar pagamento no MercadoPago' },
-        { status: 500 }
-      );
-    }
-
-    // Selecionar o link correto baseado no ambiente
-    const paymentUrl = paymentResult.initPoint || paymentResult.sandboxInitPoint;
-    
-    if (!paymentUrl) {
-      console.error('❌ Nenhum link de pagamento retornado pelo MercadoPago');
-      return NextResponse.json(
-        { error: 'Link de pagamento não foi gerado' },
-        { status: 500 }
-      );
-    }
-
-    console.log('🔗 Link de pagamento gerado:', paymentUrl);
-
-    // 3. Atualizar booking com dados do MercadoPago
-    await bookingStorage.updateBooking(bookingRecord.orderId, {
-      preferenceId: paymentResult.preferenceId,
-      mercadoPagoUrl: paymentUrl
-    });
-
-    // 4. Enviar para N8N
+    // 4. Enviar para N8N (WhatsApp booking)
     try {
-      const n8nResult = await submitToN8N({
+      await submitToN8N({
         orderId: bookingRecord.orderId,
         name,
         phone,
         email,
         service,
-        paymentStatus: 'pending',
-        preferenceId: paymentResult.preferenceId,
-        mercadoPagoUrl: paymentUrl,
+        paymentStatus: 'whatsapp_pending',
+        bookingType: 'whatsapp',
         createdAt: bookingRecord.createdAt
       });
 
-      if (n8nResult.success) {
-        await bookingStorage.updateBooking(bookingRecord.orderId, {
-          n8nSent: true
-        });
-      }
+      await bookingStorage.updateBooking(bookingRecord.orderId, {
+        n8nSent: true
+      });
     } catch (n8nError) {
       paymentLogger.logPaymentError(bookingRecord.orderId, n8nError, 'n8n_webhook');
     }
 
-    paymentLogger.logBusinessEvent({
-      orderId: bookingRecord.orderId,
-      event: 'payment_pending',
-      customerEmail: email,
-      timestamp: new Date(),
-      details: { paymentUrl, preferenceId: paymentResult.preferenceId }
-    });
-
-    // 6. Уведомить администраторов О ПОПЫТКЕ ПОКУПКИ
+    // 5. Notificar administradores sobre WhatsApp booking
     try {
       const serviceNames: Record<string, string> = {
         'manicure-gel': 'MANICURE + NIVELAMENTO + ESMALTAÇÃO EM GEL',
@@ -133,26 +162,25 @@ export async function POST(request: NextRequest) {
         service: serviceNames[service] || service,
         price: servicePrices[service] || 'N/A',
         timestamp: new Date().toISOString(),
-        status: 'TENTATIVA_COMPRA'
+        status: 'WHATSAPP_BOOKING'
       });
       
       paymentLogger.logBusinessEvent({
         orderId: bookingRecord.orderId,
-        event: 'admin_notification_tentativa',
+        event: 'admin_notification_whatsapp',
         customerEmail: email,
         timestamp: new Date()
       });
     } catch (adminEmailError) {
-      paymentLogger.logPaymentError(bookingRecord.orderId, adminEmailError, 'admin_notification_tentativa');
+      paymentLogger.logPaymentError(bookingRecord.orderId, adminEmailError, 'admin_notification_whatsapp');
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Booking criado com sucesso!',
+      message: 'Booking criado, redirecionando para WhatsApp',
       data: {
         orderId: bookingRecord.orderId,
-        paymentUrl: paymentUrl,
-        preferenceId: paymentResult.preferenceId
+        type: 'whatsapp_booking'
       }
     });
 

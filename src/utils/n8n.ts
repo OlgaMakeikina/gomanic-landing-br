@@ -7,6 +7,7 @@ interface N8NSubmissionData {
   paymentStatus: string;
   preferenceId?: string;
   mercadoPagoUrl?: string;
+  bookingType?: string;
   createdAt: string;
 }
 
@@ -42,9 +43,10 @@ export const submitToN8N = async (data: N8NSubmissionData): Promise<N8NResponse>
         paymentStatus: data.paymentStatus,
         preferenceId: data.preferenceId,
         mercadoPagoUrl: data.mercadoPagoUrl,
+        bookingType: data.bookingType,
         source: 'gomanic-landing-br',
         timestamp: data.createdAt,
-        type: 'booking_with_payment'
+        type: data.bookingType === 'whatsapp' ? 'whatsapp_booking' : 'booking_with_payment'
       }),
     });
 
